@@ -1,117 +1,170 @@
 {% extends "base.html" %}
 {% block title %}Quran Kareem{% endblock %}
+
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-<div>
-<h4 class="fw-bold mb-1" style="color:#0a5c36">📖 Quran Kareem</h4>
-<p class="text-muted mb-0" style="font-size:.83rem">{{ total_surahs }} Surahs • 30 Para • 604 Pages</p>
-</div>
-<div class="d-flex gap-2">
-<a href="{% url "quran_audio" %}" class="btn-gold" style="text-decoration:none;font-size:.82rem">🎧 Audio</a>
-<a href="{% url "quran_bookmarks" %}" class="btn-ghost" style="font-size:.82rem">🔖 Bookmarks</a>
-</div>
+<!-- Header -->
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+    <div>
+        <h1 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+            <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+            </svg>
+            Quran Kareem
+        </h1>
+        <p class="text-sm text-gray-500 mt-1">{{ total_surahs }} Surahs - 30 Para - 604 Pages</p>
+    </div>
+    <div class="flex gap-2">
+        <a href="{% url 'quran_audio' %}" class="inline-flex items-center gap-2 px-4 py-2 bg-amber-100 text-amber-700 rounded-xl text-sm font-medium hover:bg-amber-200 transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
+            </svg>
+            Audio
+        </a>
+        <a href="{% url 'quran_bookmarks' %}" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-200 transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+            </svg>
+            Bookmarks
+        </a>
+    </div>
 </div>
 
 <!-- Resume Reading Banner -->
 {% if last_read %}
-<div style="background:linear-gradient(135deg,#062618,#0a5c36);border-radius:16px;padding:20px 24px;margin-bottom:24px;color:#fff;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-<div>
-<div style="font-size:.75rem;opacity:.7;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Jahan chhodha tha:</div>
-<div style="font-size:1.1rem;font-weight:700">Page {{ last_read.page_number }}{% if last_read.surah %} — {{ last_read.surah.name_english }}{% endif %}</div>
-<div style="font-size:.78rem;opacity:.6;margin-top:2px">{{ last_read.updated_at|timesince }} pehle</div>
-</div>
-<a href="{% url "quran_reader_page" last_read.page_number %}" style="background:#c9973e;color:#fff;text-decoration:none;padding:10px 20px;border-radius:10px;font-size:.82rem;font-weight:700;white-space:nowrap">
-▶ Resume
-</a>
+<div class="bg-gradient-to-r from-emerald-800 to-emerald-600 rounded-2xl p-5 mb-6 text-white">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <p class="text-xs text-emerald-200 uppercase tracking-wide mb-1">Jahan chhodha tha:</p>
+            <p class="text-lg font-bold">Page {{ last_read.page_number }}{% if last_read.surah %} - {{ last_read.surah.name_english }}{% endif %}</p>
+            <p class="text-sm text-emerald-200 mt-1">{{ last_read.updated_at|timesince }} pehle</p>
+        </div>
+        <a href="{% url 'quran_reader_page' last_read.page_number %}" class="inline-flex items-center justify-center gap-2 px-5 py-3 bg-amber-500 hover:bg-amber-400 text-white font-semibold rounded-xl transition-colors whitespace-nowrap">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+            </svg>
+            Resume
+        </a>
+    </div>
 </div>
 {% endif %}
 
-<!-- Main Buttons -->
-<div class="row g-3 mb-4">
-<div class="col-6 col-md-3">
-<a href="{% url "quran_reader" %}" style="text-decoration:none;display:block;text-align:center;padding:20px 14px;background:#f0fdf4;border-radius:14px;border:1px solid #dcfce7">
-<div style="font-size:2rem;margin-bottom:6px">📖</div>
-<div style="font-size:.8rem;font-weight:700;color:#166534">Start Reading</div>
-<div style="font-size:.7rem;color:#86efac;margin-top:2px">Page 1 se</div>
-</a>
-</div>
-<div class="col-6 col-md-3">
-<a href="{% url "surah_index" %}" style="text-decoration:none;display:block;text-align:center;padding:20px 14px;background:#eff6ff;border-radius:14px;border:1px solid #bfdbfe">
-<div style="font-size:2rem;margin-bottom:6px">📋</div>
-<div style="font-size:.8rem;font-weight:700;color:#1e40af">Surah Index</div>
-<div style="font-size:.7rem;color:#93c5fd;margin-top:2px">114 Surahs</div>
-</a>
-</div>
-<div class="col-6 col-md-3">
-<a href="{% url "para_index" %}" style="text-decoration:none;display:block;text-align:center;padding:20px 14px;background:#fdf4ff;border-radius:14px;border:1px solid #e9d5ff">
-<div style="font-size:2rem;margin-bottom:6px">📚</div>
-<div style="font-size:.8rem;font-weight:700;color:#6b21a8">Para / Juz</div>
-<div style="font-size:.7rem;color:#d8b4fe;margin-top:2px">30 Para</div>
-</a>
-</div>
-<div class="col-6 col-md-3">
-<a href="{% url "quran_audio" %}" style="text-decoration:none;display:block;text-align:center;padding:20px 14px;background:#fef9ee;border-radius:14px;border:1px solid #fde68a">
-<div style="font-size:2rem;margin-bottom:6px">🎧</div>
-<div style="font-size:.8rem;font-weight:700;color:#92400e">Listen / Audio</div>
-<div style="font-size:.7rem;color:#fcd34d;margin-top:2px">{{ reciters|length }} Reciters</div>
-</a>
-</div>
+<!-- Quick Action Cards -->
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+    <a href="{% url 'quran_reader' %}" class="group block p-5 bg-emerald-50 border border-emerald-100 rounded-2xl hover:bg-emerald-100 transition-all">
+        <div class="w-12 h-12 bg-emerald-100 group-hover:bg-emerald-200 rounded-xl flex items-center justify-center mb-3 transition-colors">
+            <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+            </svg>
+        </div>
+        <p class="font-semibold text-emerald-800 text-sm">Start Reading</p>
+        <p class="text-xs text-emerald-600 mt-0.5">Page 1 se</p>
+    </a>
+    
+    <a href="{% url 'surah_index' %}" class="group block p-5 bg-blue-50 border border-blue-100 rounded-2xl hover:bg-blue-100 transition-all">
+        <div class="w-12 h-12 bg-blue-100 group-hover:bg-blue-200 rounded-xl flex items-center justify-center mb-3 transition-colors">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+            </svg>
+        </div>
+        <p class="font-semibold text-blue-800 text-sm">Surah Index</p>
+        <p class="text-xs text-blue-600 mt-0.5">114 Surahs</p>
+    </a>
+    
+    <a href="{% url 'para_index' %}" class="group block p-5 bg-purple-50 border border-purple-100 rounded-2xl hover:bg-purple-100 transition-all">
+        <div class="w-12 h-12 bg-purple-100 group-hover:bg-purple-200 rounded-xl flex items-center justify-center mb-3 transition-colors">
+            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+            </svg>
+        </div>
+        <p class="font-semibold text-purple-800 text-sm">Para / Juz</p>
+        <p class="text-xs text-purple-600 mt-0.5">30 Para</p>
+    </a>
+    
+    <a href="{% url 'quran_audio' %}" class="group block p-5 bg-amber-50 border border-amber-100 rounded-2xl hover:bg-amber-100 transition-all">
+        <div class="w-12 h-12 bg-amber-100 group-hover:bg-amber-200 rounded-xl flex items-center justify-center mb-3 transition-colors">
+            <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
+            </svg>
+        </div>
+        <p class="font-semibold text-amber-800 text-sm">Listen / Audio</p>
+        <p class="text-xs text-amber-600 mt-0.5">{{ reciters|length }} Reciters</p>
+    </a>
 </div>
 
-<!-- Go to Page -->
-<div class="card mb-4">
-<div class="card-head"><h6>🔍 Direct Page Ya Surah Pe Jao</h6></div>
-<div class="card-body">
-<div class="row g-2">
-<div class="col-md-6">
-<div class="input-group">
-<input type="number" id="goPage" class="form-control" placeholder="Page no (1-604)" min="1" max="604">
-<button class="btn-emerald" style="border-radius:0 8px 8px 0;padding:8px 16px;border:none;cursor:pointer" onclick="goToPage()">Go →</button>
-</div>
-</div>
-<div class="col-md-6">
-<select class="form-select" id="surahSelect" onchange="goToSurah(this.value)">
-<option value="">-- Surah chunein --</option>
-{% for s in surahs %}
-<option value="{{ s.page_start }}">{{ s.number }}. {{ s.name_english }} — {{ s.name_arabic }}</option>
-{% endfor %}
-</select>
-</div>
-</div>
-</div>
+<!-- Go to Page / Surah -->
+<div class="bg-white rounded-2xl border border-gray-100 shadow-sm mb-6 overflow-hidden">
+    <div class="px-5 py-4 border-b border-gray-100">
+        <h2 class="font-semibold text-gray-900 flex items-center gap-2">
+            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            Direct Page Ya Surah Pe Jao
+        </h2>
+    </div>
+    <div class="p-5">
+        <div class="grid sm:grid-cols-2 gap-3">
+            <div class="flex">
+                <input type="number" id="goPage" 
+                       class="flex-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-l-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all text-gray-900 placeholder-gray-400"
+                       placeholder="Page no (1-604)" min="1" max="604">
+                <button onclick="goToPage()" 
+                        class="px-5 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-r-xl transition-colors whitespace-nowrap">
+                    Go
+                </button>
+            </div>
+            <select id="surahSelect" onchange="goToSurah(this.value)"
+                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all text-gray-900">
+                <option value="">-- Surah chunein --</option>
+                {% for s in surahs %}
+                <option value="{{ s.page_start }}">{{ s.number }}. {{ s.name_english }} - {{ s.name_arabic }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
 </div>
 
 <!-- Recent Bookmarks -->
 {% if bookmarks %}
-<div class="card">
-<div class="card-head"><h6>🔖 Bookmarks</h6><a href="{% url "quran_bookmarks" %}" style="font-size:.78rem;color:#0a5c36;text-decoration:none">All dekho →</a></div>
-<div class="card-body p-0">
-{% for bm in bookmarks %}
-<a href="{% url "quran_reader_page" bm.page_number %}" style="text-decoration:none;display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid #f1f5f9">
-<div>
-<div style="font-weight:600;font-size:.85rem;color:#1e293b">Page {{ bm.page_number }}{% if bm.surah %} — {{ bm.surah.name_english }}{% endif %}</div>
-<div style="font-size:.73rem;color:#94a3b8">{{ bm.label }}</div>
-</div>
-<span style="color:#c9973e;font-size:1rem">🔖</span>
-</a>
-{% endfor %}
-</div>
+<div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+    <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+        <h2 class="font-semibold text-gray-900 flex items-center gap-2">
+            <svg class="w-5 h-5 text-amber-500" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+            </svg>
+            Bookmarks
+        </h2>
+        <a href="{% url 'quran_bookmarks' %}" class="text-sm text-emerald-600 hover:text-emerald-700 font-medium">
+            All dekho
+        </a>
+    </div>
+    <div class="divide-y divide-gray-100">
+        {% for bm in bookmarks %}
+        <a href="{% url 'quran_reader_page' bm.page_number %}" class="flex items-center justify-between p-4 hover:bg-gray-50 transition-colors">
+            <div>
+                <p class="font-medium text-gray-900 text-sm">Page {{ bm.page_number }}{% if bm.surah %} - {{ bm.surah.name_english }}{% endif %}</p>
+                <p class="text-xs text-gray-500 mt-0.5">{{ bm.label }}</p>
+            </div>
+            <svg class="w-5 h-5 text-amber-500" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+            </svg>
+        </a>
+        {% endfor %}
+    </div>
 </div>
 {% endif %}
-
 {% endblock %}
 
 {% block extra_js %}
 <script>
 function goToPage() {
-  const p = document.getElementById('goPage').value;
-  if (p >= 1 && p <= 604) window.location.href = `/quran/read/${p}/`;
+    const p = document.getElementById('goPage').value;
+    if (p >= 1 && p <= 604) window.location.href = `/quran/read/${p}/`;
 }
 function goToSurah(page) {
-  if (page) window.location.href = `/quran/read/${page}/`;
+    if (page) window.location.href = `/quran/read/${page}/`;
 }
 document.getElementById('goPage').addEventListener('keypress', function(e) {
-  if (e.key === 'Enter') goToPage();
+    if (e.key === 'Enter') goToPage();
 });
 </script>
 {% endblock %}

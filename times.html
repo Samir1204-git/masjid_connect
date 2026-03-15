@@ -1,39 +1,143 @@
 {% extends "base.html" %}
 {% block title %}Prayer Times{% endblock %}
+
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-<div>
-<h4 class="fw-bold mb-1" style="color:#0a5c36">🌙 Prayer Times</h4>
-<p class="text-muted mb-0" style="font-size:.83rem">{{ today_date|default:"Aaj ki Namaz" }}</p>
-</div>
-</div>
-
-<div class="row g-3 mb-4">
-{% for pt in prayer_times %}
-<div class="col-6 col-md-4 col-lg-2">
-<div class="card text-center" style="border-radius:14px;{% if pt.is_next %}border:2px solid #c9973e;background:#fef9ee{% endif %}">
-<div class="card-body py-3">
-<div style="font-size:1.6rem;margin-bottom:4px">{{ pt.icon }}</div>
-<div style="font-weight:700;font-size:.85rem;color:#0a5c36">{{ pt.name }}</div>
-<div style="font-size:1rem;font-weight:800;color:#1a7a50;margin-top:2px">{{ pt.time }}</div>
-{% if pt.is_next %}<div style="font-size:.65rem;color:#c9973e;font-weight:700;margin-top:2px">▶ Next</div>{% endif %}
-</div>
-</div>
-</div>
-{% empty %}
-<!-- Default static cards if no DB times -->
-<div class="col-6 col-md-4 col-lg-2"><div class="card text-center" style="border-radius:14px"><div class="card-body py-3"><div style="font-size:1.6rem">🌅</div><div style="font-weight:700;font-size:.85rem;color:#0a5c36">Fajr</div><div style="font-size:1rem;font-weight:800;color:#1a7a50;margin-top:2px">—</div></div></div></div>
-<div class="col-6 col-md-4 col-lg-2"><div class="card text-center" style="border-radius:14px"><div class="card-body py-3"><div style="font-size:1.6rem">☀️</div><div style="font-weight:700;font-size:.85rem;color:#0a5c36">Zuhr</div><div style="font-size:1rem;font-weight:800;color:#1a7a50;margin-top:2px">—</div></div></div></div>
-<div class="col-6 col-md-4 col-lg-2"><div class="card text-center" style="border-radius:14px"><div class="card-body py-3"><div style="font-size:1.6rem">🌤</div><div style="font-weight:700;font-size:.85rem;color:#0a5c36">Asr</div><div style="font-size:1rem;font-weight:800;color:#1a7a50;margin-top:2px">—</div></div></div></div>
-<div class="col-6 col-md-4 col-lg-2"><div class="card text-center" style="border-radius:14px"><div class="card-body py-3"><div style="font-size:1.6rem">🌆</div><div style="font-weight:700;font-size:.85rem;color:#0a5c36">Maghrib</div><div style="font-size:1rem;font-weight:800;color:#1a7a50;margin-top:2px">—</div></div></div></div>
-<div class="col-6 col-md-4 col-lg-2"><div class="card text-center" style="border-radius:14px"><div class="card-body py-3"><div style="font-size:1.6rem">🌙</div><div style="font-weight:700;font-size:.85rem;color:#0a5c36">Isha</div><div style="font-size:1rem;font-weight:800;color:#1a7a50;margin-top:2px">—</div></div></div></div>
-{% endfor %}
+<!-- Header -->
+<div class="mb-6">
+    <h1 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+        <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+        </svg>
+        Prayer Times
+    </h1>
+    <p class="text-sm text-gray-500 mt-1">{{ today_date|default:"Aaj ki Namaz" }}</p>
 </div>
 
-<div class="row g-3">
-<div class="col-6 col-md-3"><a href="{% url "learning_home" %}" style="text-decoration:none;display:block;text-align:center;padding:16px;background:#fef9ee;border-radius:12px;border:1px solid #fde68a"><div style="font-size:1.5rem">🤲</div><div style="font-size:.75rem;font-weight:600;color:#92400e;margin-top:4px">Namaz Guide</div></a></div>
-<div class="col-6 col-md-3"><a href="{% url "learning_home" %}" style="text-decoration:none;display:block;text-align:center;padding:16px;background:#eff6ff;border-radius:12px;border:1px solid #bfdbfe"><div style="font-size:1.5rem">💧</div><div style="font-size:.75rem;font-weight:600;color:#1e40af;margin-top:4px">Wuzu Guide</div></a></div>
-<div class="col-6 col-md-3"><a href="{% url "learning_home" %}" style="text-decoration:none;display:block;text-align:center;padding:16px;background:#fdf4ff;border-radius:12px;border:1px solid #e9d5ff"><div style="font-size:1.5rem">📿</div><div style="font-size:.75rem;font-weight:600;color:#6b21a8;margin-top:4px">Duayein</div></a></div>
-<div class="col-6 col-md-3"><a href="{% url "learning_home" %}" style="text-decoration:none;display:block;text-align:center;padding:16px;background:#f0fdf4;border-radius:12px;border:1px solid #dcfce7"><div style="font-size:1.5rem">🕌</div><div style="font-size:.75rem;font-weight:600;color:#166534;margin-top:4px">Sunnatein</div></a></div>
+<!-- Prayer Time Cards -->
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-8">
+    {% for pt in prayer_times %}
+    <div class="relative bg-white rounded-2xl border {% if pt.is_next %}border-amber-300 bg-amber-50 ring-2 ring-amber-200{% else %}border-gray-100{% endif %} p-4 text-center transition-all hover:shadow-md">
+        {% if pt.is_next %}
+        <div class="absolute -top-2 left-1/2 -translate-x-1/2">
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-500 text-white text-xs font-bold rounded-full">
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                Next
+            </span>
+        </div>
+        {% endif %}
+        <div class="w-12 h-12 mx-auto mb-3 rounded-xl {% if pt.is_next %}bg-amber-100{% else %}bg-emerald-50{% endif %} flex items-center justify-center">
+            {% if pt.name == 'Fajr' %}
+            <svg class="w-6 h-6 {% if pt.is_next %}text-amber-600{% else %}text-emerald-600{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707"/>
+            </svg>
+            {% elif pt.name == 'Zuhr' %}
+            <svg class="w-6 h-6 {% if pt.is_next %}text-amber-600{% else %}text-emerald-600{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+            </svg>
+            {% elif pt.name == 'Asr' %}
+            <svg class="w-6 h-6 {% if pt.is_next %}text-amber-600{% else %}text-emerald-600{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/>
+            </svg>
+            {% elif pt.name == 'Maghrib' %}
+            <svg class="w-6 h-6 {% if pt.is_next %}text-amber-600{% else %}text-emerald-600{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+            </svg>
+            {% else %}
+            <svg class="w-6 h-6 {% if pt.is_next %}text-amber-600{% else %}text-emerald-600{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+            </svg>
+            {% endif %}
+        </div>
+        <p class="font-semibold text-gray-900 text-sm">{{ pt.name }}</p>
+        <p class="text-lg font-bold {% if pt.is_next %}text-amber-600{% else %}text-emerald-600{% endif %} mt-1">{{ pt.time }}</p>
+    </div>
+    {% empty %}
+    <!-- Default static cards if no DB times -->
+    <div class="bg-white rounded-2xl border border-gray-100 p-4 text-center">
+        <div class="w-12 h-12 mx-auto mb-3 rounded-xl bg-emerald-50 flex items-center justify-center">
+            <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707"/>
+            </svg>
+        </div>
+        <p class="font-semibold text-gray-900 text-sm">Fajr</p>
+        <p class="text-lg font-bold text-emerald-600 mt-1">--:--</p>
+    </div>
+    <div class="bg-white rounded-2xl border border-gray-100 p-4 text-center">
+        <div class="w-12 h-12 mx-auto mb-3 rounded-xl bg-emerald-50 flex items-center justify-center">
+            <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+            </svg>
+        </div>
+        <p class="font-semibold text-gray-900 text-sm">Zuhr</p>
+        <p class="text-lg font-bold text-emerald-600 mt-1">--:--</p>
+    </div>
+    <div class="bg-white rounded-2xl border border-gray-100 p-4 text-center">
+        <div class="w-12 h-12 mx-auto mb-3 rounded-xl bg-emerald-50 flex items-center justify-center">
+            <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/>
+            </svg>
+        </div>
+        <p class="font-semibold text-gray-900 text-sm">Asr</p>
+        <p class="text-lg font-bold text-emerald-600 mt-1">--:--</p>
+    </div>
+    <div class="bg-white rounded-2xl border border-gray-100 p-4 text-center">
+        <div class="w-12 h-12 mx-auto mb-3 rounded-xl bg-emerald-50 flex items-center justify-center">
+            <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+            </svg>
+        </div>
+        <p class="font-semibold text-gray-900 text-sm">Maghrib</p>
+        <p class="text-lg font-bold text-emerald-600 mt-1">--:--</p>
+    </div>
+    <div class="bg-white rounded-2xl border border-gray-100 p-4 text-center">
+        <div class="w-12 h-12 mx-auto mb-3 rounded-xl bg-emerald-50 flex items-center justify-center">
+            <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+            </svg>
+        </div>
+        <p class="font-semibold text-gray-900 text-sm">Isha</p>
+        <p class="text-lg font-bold text-emerald-600 mt-1">--:--</p>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Quick Links -->
+<h2 class="text-lg font-semibold text-gray-900 mb-4">Learn More</h2>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+    <a href="{% url 'learning_home' %}" class="group flex flex-col items-center p-4 bg-amber-50 border border-amber-100 rounded-2xl hover:bg-amber-100 transition-all">
+        <div class="w-12 h-12 bg-amber-100 group-hover:bg-amber-200 rounded-xl flex items-center justify-center mb-2 transition-colors">
+            <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11"/>
+            </svg>
+        </div>
+        <p class="text-sm font-medium text-amber-800">Namaz Guide</p>
+    </a>
+    
+    <a href="{% url 'learning_home' %}" class="group flex flex-col items-center p-4 bg-blue-50 border border-blue-100 rounded-2xl hover:bg-blue-100 transition-all">
+        <div class="w-12 h-12 bg-blue-100 group-hover:bg-blue-200 rounded-xl flex items-center justify-center mb-2 transition-colors">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+            </svg>
+        </div>
+        <p class="text-sm font-medium text-blue-800">Wuzu Guide</p>
+    </a>
+    
+    <a href="{% url 'learning_home' %}" class="group flex flex-col items-center p-4 bg-purple-50 border border-purple-100 rounded-2xl hover:bg-purple-100 transition-all">
+        <div class="w-12 h-12 bg-purple-100 group-hover:bg-purple-200 rounded-xl flex items-center justify-center mb-2 transition-colors">
+            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+            </svg>
+        </div>
+        <p class="text-sm font-medium text-purple-800">Duayein</p>
+    </a>
+    
+    <a href="{% url 'learning_home' %}" class="group flex flex-col items-center p-4 bg-emerald-50 border border-emerald-100 rounded-2xl hover:bg-emerald-100 transition-all">
+        <div class="w-12 h-12 bg-emerald-100 group-hover:bg-emerald-200 rounded-xl flex items-center justify-center mb-2 transition-colors">
+            <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+            </svg>
+        </div>
+        <p class="text-sm font-medium text-emerald-800">Sunnatein</p>
+    </a>
 </div>
 {% endblock %}

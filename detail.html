@@ -1,24 +1,62 @@
 {% extends "base.html" %}
 {% block title %}Jamaat Detail{% endblock %}
+
 {% block content %}
-<a href="{% url "jamaat_list" %}" class="btn-ghost mb-3">← Back</a>
-<div class="card">
-<div style="background:linear-gradient(135deg,#062618,#1a7a50);padding:24px;color:#fff">
-<div style="font-size:.72rem;opacity:.6;text-transform:uppercase;letter-spacing:.5px">{{ jamaat.get_jamaat_type_display }}</div>
-<h4 class="fw-bold mb-1">{{ jamaat.destination|default:"Jamaat" }}</h4>
-<div style="opacity:.7;font-size:.83rem">📅 {{ jamaat.start_date }} {% if jamaat.end_date %}→ {{ jamaat.end_date }}{% endif %} &nbsp;•&nbsp; {{ jamaat.get_status_display }}</div>
-</div>
-<div class="card-body">
-{% if jamaat.notes %}<div style="background:#f8f6f1;border-radius:10px;padding:14px;margin-bottom:16px;font-size:.87rem">{{ jamaat.notes }}</div>{% endif %}
-<h6 class="fw-bold" style="color:#0a5c36;margin-bottom:12px">Members ({{ members|length }})</h6>
-<div class="d-flex flex-wrap gap-2">
-{% for m in members %}
-<a href="{% url "user_profile" m.user.id %}" style="text-decoration:none;background:#f0fdf4;border:1px solid #dcfce7;border-radius:10px;padding:8px 14px;display:flex;align-items:center;gap:8px">
-<div style="width:28px;height:28px;border-radius:50%;background:#1a7a50;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.75rem;font-weight:800">{{ m.user.name|first|upper }}</div>
-<span style="font-size:.8rem;color:#166534;font-weight:600">{{ m.user.name }}</span>
+<!-- Back Button -->
+<a href="{% url 'jamaat_list' %}" class="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 text-sm font-medium mb-4 transition-colors">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+    </svg>
+    Back
 </a>
-{% empty %}<p class="text-muted" style="font-size:.85rem">Koi member nahi</p>{% endfor %}
-</div>
-</div>
+
+<!-- Jamaat Card -->
+<div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    <!-- Header -->
+    <div class="bg-gradient-to-br from-emerald-700 to-emerald-500 px-6 py-6 text-white">
+        <p class="text-xs text-emerald-200 uppercase tracking-wide mb-1">{{ jamaat.get_jamaat_type_display }}</p>
+        <h1 class="text-xl font-bold mb-2">{{ jamaat.destination|default:"Jamaat" }}</h1>
+        <div class="flex flex-wrap items-center gap-2 text-sm text-emerald-100">
+            <span class="inline-flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                {{ jamaat.start_date }}{% if jamaat.end_date %} - {{ jamaat.end_date }}{% endif %}
+            </span>
+            <span class="px-2 py-0.5 bg-white/20 rounded-full text-xs font-medium">{{ jamaat.get_status_display }}</span>
+        </div>
+    </div>
+    
+    <!-- Content -->
+    <div class="p-6 space-y-6">
+        {% if jamaat.notes %}
+        <div class="bg-amber-50 rounded-xl p-4">
+            <p class="text-sm text-gray-700">{{ jamaat.notes }}</p>
+        </div>
+        {% endif %}
+        
+        <!-- Members -->
+        <div>
+            <h2 class="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                </svg>
+                Members ({{ members|length }})
+            </h2>
+            <div class="flex flex-wrap gap-2">
+                {% for m in members %}
+                <a href="{% url 'user_profile' m.user.id %}" 
+                   class="inline-flex items-center gap-2 px-3 py-2 bg-emerald-50 border border-emerald-100 rounded-xl hover:bg-emerald-100 transition-colors">
+                    <div class="w-7 h-7 rounded-full bg-emerald-600 flex items-center justify-center text-white text-xs font-bold">
+                        {{ m.user.name|first|upper }}
+                    </div>
+                    <span class="text-sm font-medium text-emerald-800">{{ m.user.name }}</span>
+                </a>
+                {% empty %}
+                <p class="text-sm text-gray-500">Koi member nahi</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

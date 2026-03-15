@@ -1,20 +1,60 @@
 {% extends "base.html" %}
 {% block title %}Add Schedule{% endblock %}
+
 {% block content %}
-<a href="{% url "schedule_list" %}" class="btn-ghost mb-3">← Back</a>
-<div class="row justify-content-center"><div class="col-lg-6">
-<div class="form-card">
-<div class="d-flex align-items-center gap-3 mb-4">
-<div style="width:50px;height:50px;border-radius:14px;background:linear-gradient(135deg,#0a5c36,#2da870);display:flex;align-items:center;justify-content:center;font-size:1.4rem">📅</div>
-<div><h5 class="fw-bold mb-0" style="color:#0a5c36">Schedule Add Karo</h5><small class="text-muted">Fajr Bayan, Gasht, Mashwara, etc.</small></div>
+<!-- Back Button -->
+<a href="{% url 'schedule_list' %}" class="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 text-sm font-medium mb-4 transition-colors">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+    </svg>
+    Back
+</a>
+
+<div class="max-w-lg mx-auto">
+    <!-- Form Card -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <!-- Header -->
+        <div class="px-6 py-5 border-b border-gray-100">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-gray-900">Schedule Add Karo</h1>
+                    <p class="text-sm text-gray-500">Fajr Bayan, Gasht, Mashwara, etc.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Form -->
+        <form method="post" class="p-6 space-y-4">
+            {% csrf_token %}
+            
+            {% for field in form %}
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                <p class="mt-1.5 text-sm text-red-600 flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    {{ field.errors.0 }}
+                </p>
+                {% endif %}
+            </div>
+            {% endfor %}
+            
+            <button type="submit" 
+                    class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl transition-all transform active:scale-[0.98] shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2 mt-6">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                Schedule Save Karo
+            </button>
+        </form>
+    </div>
 </div>
-<form method="post">{% csrf_token %}
-{% for field in form %}
-<div class="mb-3"><label class="form-label">{{ field.label }}</label>{{ field }}
-{% if field.errors %}<div class="text-danger" style="font-size:.78rem">{{ field.errors.0 }}</div>{% endif %}
-</div>{% endfor %}
-<button type="submit" class="btn-emerald w-100" style="padding:12px">Schedule Save Karo</button>
-</form>
-</div>
-</div></div>
 {% endblock %}

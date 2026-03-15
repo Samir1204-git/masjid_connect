@@ -1,140 +1,185 @@
 {% extends "base.html" %}
-{% block title %}Quran — Page {{ page_number }}{% endblock %}
-{% block extra_css %}
-<style>
-.reader-page { touch-action: pan-y; user-select: none; }
-.quran-img { max-width:100%; border-radius:8px; box-shadow:0 4px 20px rgba(0,0,0,.15); display:block; margin:0 auto; }
-.nav-btn { display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;border:none;cursor:pointer;font-size:1.2rem;transition:all .2s; }
-.nav-btn:disabled { opacity:.3;cursor:not-allowed; }
-.bm-btn { background:none;border:none;font-size:1.4rem;cursor:pointer;transition:transform .2s; }
-.bm-btn:hover { transform:scale(1.2); }
-.page-info { font-size:.78rem;color:#64748b;text-align:center; }
-</style>
-{% endblock %}
+{% block title %}Quran - Page {{ page_number }}{% endblock %}
+
 {% block content %}
-<!-- Top Nav -->
-<div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
-<div class="d-flex align-items-center gap-2">
-<a href="{% url "quran_home" %}" style="color:#64748b;text-decoration:none;font-size:1.2rem">←</a>
-<div>
-<div style="font-weight:700;font-size:.9rem;color:#0a5c36">📖 Page {{ page_number }}</div>
-{% if surah %}<div style="font-size:.73rem;color:#64748b">{{ surah.name_english }} — {{ surah.name_arabic }}</div>{% endif %}
-</div>
-</div>
-<div class="d-flex align-items-center gap-3">
-<a href="{% url "quran_audio_surah" surah.number|default:1 %}" style="color:#c9973e;text-decoration:none;font-size:1.1rem" title="Audio">🎧</a>
-<button class="bm-btn" id="bmBtn" onclick="toggleBookmark()" title="Bookmark">
-{% if is_bookmarked %}🔖{% else %}🏷️{% endif %}
-</button>
-<a href="{% url "surah_index" %}" style="color:#64748b;text-decoration:none;font-size:.8rem">Surahs</a>
-</div>
+<!-- Top Navigation -->
+<div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+    <div class="flex items-center gap-3">
+        <a href="{% url 'quran_home' %}" class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+        </a>
+        <div>
+            <p class="font-bold text-gray-900 flex items-center gap-2">
+                <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                </svg>
+                Page {{ page_number }}
+            </p>
+            {% if surah %}
+            <p class="text-xs text-gray-500">{{ surah.name_english }} - {{ surah.name_arabic }}</p>
+            {% endif %}
+        </div>
+    </div>
+    <div class="flex items-center gap-2">
+        <a href="{% url 'quran_audio_surah' surah.number|default:1 %}" 
+           class="w-10 h-10 flex items-center justify-center rounded-full bg-amber-100 hover:bg-amber-200 text-amber-600 transition-colors" title="Audio">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
+            </svg>
+        </a>
+        <button id="bmBtn" onclick="toggleBookmark()" 
+                class="w-10 h-10 flex items-center justify-center rounded-full {% if is_bookmarked %}bg-amber-500 text-white{% else %}bg-gray-100 text-gray-600 hover:bg-gray-200{% endif %} transition-colors" title="Bookmark">
+            <svg class="w-5 h-5" fill="{% if is_bookmarked %}currentColor{% else %}none{% endif %}" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+            </svg>
+        </button>
+        <a href="{% url 'surah_index' %}" 
+           class="px-3 py-2 text-sm text-gray-600 hover:text-gray-900 font-medium transition-colors">Surahs</a>
+    </div>
 </div>
 
 <!-- Progress Bar -->
-<div style="background:#e2e8f0;border-radius:4px;height:4px;margin-bottom:16px">
-<div style="background:linear-gradient(90deg,#0a5c36,#2da870);height:4px;border-radius:4px;width:{{ page_number|floatformat:0 }}%" id="progressBar"></div>
+<div class="h-1 bg-gray-200 rounded-full mb-4 overflow-hidden">
+    <div id="progressBar" class="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full transition-all" style="width: {{ page_number|floatformat:0 }}%"></div>
 </div>
 
-<!-- Quran Page Image (CDN — 0 MB local storage!) -->
-<div class="reader-page" id="readerPage">
-<img src="{{ image_url }}"
-     alt="Quran Page {{ page_number }}"
-     class="quran-img"
-     id="quranImg"
-     loading="lazy"
-     onerror="this.src='https://via.placeholder.com/600x850/f8f6f1/0a5c36?text=Page+{{ page_number }}+Loading...'">
+<!-- Quran Page Image -->
+<div id="readerPage" class="touch-pan-y select-none">
+    <img src="{{ image_url }}"
+         alt="Quran Page {{ page_number }}"
+         id="quranImg"
+         loading="lazy"
+         class="max-w-full mx-auto rounded-xl shadow-lg"
+         onerror="this.src='https://via.placeholder.com/600x850/f8f6f1/0a5c36?text=Page+{{ page_number }}+Loading...'">
 </div>
 
 <!-- Page Info -->
-<div class="page-info mt-3 mb-3">
-Page {{ page_number }} / {{ total_pages }}
-{% if surah %} &nbsp;•&nbsp; {{ surah.name_english }}{% endif %}
-{% if surah.para_start %} &nbsp;•&nbsp; Para {{ surah.para_start }}{% endif %}
+<p class="text-center text-sm text-gray-500 mt-4 mb-4">
+    Page {{ page_number }} / {{ total_pages }}
+    {% if surah %} - {{ surah.name_english }}{% endif %}
+    {% if surah.para_start %} - Para {{ surah.para_start }}{% endif %}
+</p>
+
+<!-- Navigation Controls -->
+<div class="flex items-center justify-between px-2 mb-4">
+    {% if prev_page %}
+    <a href="{% url 'quran_reader_page' prev_page %}" id="prevBtn"
+       class="w-12 h-12 flex items-center justify-center rounded-full bg-emerald-50 hover:bg-emerald-100 text-emerald-600 transition-colors">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+    </a>
+    {% else %}
+    <button disabled class="w-12 h-12 flex items-center justify-center rounded-full bg-gray-100 text-gray-300 cursor-not-allowed">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+    </button>
+    {% endif %}
+
+    <div class="text-center">
+        <p class="text-3xl font-bold text-emerald-700 font-serif">{{ page_number }}</p>
+        <p class="text-xs text-gray-400 uppercase tracking-wide">Tap or Swipe</p>
+    </div>
+
+    {% if next_page %}
+    <a href="{% url 'quran_reader_page' next_page %}" id="nextBtn"
+       class="w-12 h-12 flex items-center justify-center rounded-full bg-emerald-600 hover:bg-emerald-700 text-white transition-colors">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+    </a>
+    {% else %}
+    <button disabled class="w-12 h-12 flex items-center justify-center rounded-full bg-gray-100 text-gray-300 cursor-not-allowed">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+    </button>
+    {% endif %}
 </div>
 
-<!-- Navigation -->
-<div class="d-flex align-items-center justify-content-between px-2 mb-3">
-{% if prev_page %}
-<a href="{% url "quran_reader_page" prev_page %}" class="nav-btn" style="background:#f0fdf4;color:#0a5c36" id="prevBtn">←</a>
-{% else %}
-<button class="nav-btn" disabled style="background:#f1f5f9;color:#cbd5e1">←</button>
-{% endif %}
-
-<div style="text-align:center">
-<div style="font-weight:800;font-size:1.4rem;color:#0a5c36;font-family:'Amiri',serif">{{ page_number }}</div>
-<div style="font-size:.68rem;color:#94a3b8">TAP YA SWIPE</div>
+<!-- Jump to Page -->
+<div class="bg-gray-50 rounded-xl p-4">
+    <div class="flex gap-2 items-center">
+        <input type="number" id="jumpPage" min="1" max="604" value="{{ page_number }}"
+               class="w-28 px-3 py-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all text-gray-900 text-sm"
+               placeholder="Page no...">
+        <button onclick="jumpToPage()" 
+                class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-xl transition-colors text-sm whitespace-nowrap">
+            Go
+        </button>
+        <a href="{% url 'surah_index' %}" 
+           class="px-4 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium rounded-xl transition-colors text-sm whitespace-nowrap">
+            Surah List
+        </a>
+    </div>
 </div>
 
-{% if next_page %}
-<a href="{% url "quran_reader_page" next_page %}" class="nav-btn" style="background:#0a5c36;color:#fff" id="nextBtn">→</a>
-{% else %}
-<button class="nav-btn" disabled style="background:#f1f5f9;color:#cbd5e1">→</button>
-{% endif %}
+<!-- Toast Notification -->
+<div id="toast" class="fixed bottom-20 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-5 py-3 rounded-full text-sm font-medium shadow-lg hidden z-50">
+    Bookmark saved!
 </div>
-
-<!-- Jump to page -->
-<div style="background:#f8fafc;border-radius:12px;padding:12px 16px;margin-top:8px">
-<div class="d-flex gap-2 align-items-center">
-<input type="number" id="jumpPage" class="form-control" style="max-width:120px;font-size:.85rem" placeholder="Page no..." min="1" max="604" value="{{ page_number }}">
-<button onclick="jumpToPage()" class="btn-emerald" style="white-space:nowrap;padding:8px 16px;border:none;cursor:pointer;font-size:.82rem">Go →</button>
-<a href="{% url "surah_index" %}" class="btn-ghost" style="font-size:.82rem;white-space:nowrap">Surah List</a>
-</div>
-</div>
-
-<!-- Toast -->
-<div id="toast" style="display:none;position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:10px 20px;border-radius:20px;font-size:.82rem;z-index:999">Bookmark save!</div>
-
 {% endblock %}
+
 {% block extra_js %}
 <script>
 const CURRENT_PAGE = {{ page_number }};
-const TOTAL_PAGES  = {{ total_pages }};
-let IS_BOOKMARKED  = {% if is_bookmarked %}true{% else %}false{% endif %};
+const TOTAL_PAGES = {{ total_pages }};
+let IS_BOOKMARKED = {% if is_bookmarked %}true{% else %}false{% endif %};
 
 // Progress bar
 document.getElementById('progressBar').style.width = (CURRENT_PAGE / TOTAL_PAGES * 100) + '%';
 
 // Bookmark toggle
 function toggleBookmark() {
-  fetch('/quran/bookmark/{{ page_number }}/toggle/', {
-    method: 'POST',
-    headers: {'X-CSRFToken': '{{ csrf_token }}', 'Content-Type': 'application/json'}
-  })
-  .then(r => r.json())
-  .then(data => {
-    IS_BOOKMARKED = data.status === 'added';
-    document.getElementById('bmBtn').textContent = IS_BOOKMARKED ? '🔖' : '🏷️';
-    showToast(data.message);
-  });
+    fetch('/quran/bookmark/{{ page_number }}/toggle/', {
+        method: 'POST',
+        headers: {'X-CSRFToken': '{{ csrf_token }}', 'Content-Type': 'application/json'}
+    })
+    .then(r => r.json())
+    .then(data => {
+        IS_BOOKMARKED = data.status === 'added';
+        const btn = document.getElementById('bmBtn');
+        if (IS_BOOKMARKED) {
+            btn.classList.remove('bg-gray-100', 'text-gray-600', 'hover:bg-gray-200');
+            btn.classList.add('bg-amber-500', 'text-white');
+        } else {
+            btn.classList.remove('bg-amber-500', 'text-white');
+            btn.classList.add('bg-gray-100', 'text-gray-600', 'hover:bg-gray-200');
+        }
+        showToast(data.message);
+    });
 }
 
 // Jump to page
 function jumpToPage() {
-  const p = parseInt(document.getElementById('jumpPage').value);
-  if (p >= 1 && p <= TOTAL_PAGES) window.location.href = `/quran/read/${p}/`;
+    const p = parseInt(document.getElementById('jumpPage').value);
+    if (p >= 1 && p <= TOTAL_PAGES) window.location.href = `/quran/read/${p}/`;
 }
 
 // Toast
 function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.style.display = 'block';
-  setTimeout(() => t.style.display = 'none', 2000);
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.remove('hidden');
+    setTimeout(() => t.classList.add('hidden'), 2000);
 }
 
 // Swipe/keyboard navigation
 let touchStartX = 0;
 document.getElementById('readerPage').addEventListener('touchstart', e => touchStartX = e.changedTouches[0].screenX);
 document.getElementById('readerPage').addEventListener('touchend', e => {
-  const diff = touchStartX - e.changedTouches[0].screenX;
-  if (Math.abs(diff) > 60) {
-    if (diff > 0 && CURRENT_PAGE < TOTAL_PAGES) window.location.href = `/quran/read/${CURRENT_PAGE+1}/`;
-    if (diff < 0 && CURRENT_PAGE > 1) window.location.href = `/quran/read/${CURRENT_PAGE-1}/`;
-  }
+    const diff = touchStartX - e.changedTouches[0].screenX;
+    if (Math.abs(diff) > 60) {
+        if (diff > 0 && CURRENT_PAGE < TOTAL_PAGES) window.location.href = `/quran/read/${CURRENT_PAGE+1}/`;
+        if (diff < 0 && CURRENT_PAGE > 1) window.location.href = `/quran/read/${CURRENT_PAGE-1}/`;
+    }
 });
 document.addEventListener('keydown', e => {
-  if (e.key === 'ArrowRight' && CURRENT_PAGE < TOTAL_PAGES) window.location.href = `/quran/read/${CURRENT_PAGE+1}/`;
-  if (e.key === 'ArrowLeft'  && CURRENT_PAGE > 1) window.location.href = `/quran/read/${CURRENT_PAGE-1}/`;
+    if (e.key === 'ArrowRight' && CURRENT_PAGE < TOTAL_PAGES) window.location.href = `/quran/read/${CURRENT_PAGE+1}/`;
+    if (e.key === 'ArrowLeft' && CURRENT_PAGE > 1) window.location.href = `/quran/read/${CURRENT_PAGE-1}/`;
 });
 </script>
 {% endblock %}

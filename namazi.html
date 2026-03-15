@@ -1,553 +1,414 @@
 {% extends "base.html" %}
-{% block title %}Dashboard — Masjid Connect{% endblock %}
-
-{% block extra_css %}
-<style>
-/* ══ Greeting Banner ══════════════════════════════════════ */
-.greeting-banner {
-  background: linear-gradient(135deg, #062618 0%, #0a5c36 60%, #1a7a50 100%);
-  border-radius: 20px;
-  padding: 22px 20px;
-  margin-bottom: 20px;
-  position: relative;
-  overflow: hidden;
-}
-.greeting-banner::before {
-  content: '🕌';
-  position: absolute;
-  right: -10px; top: -10px;
-  font-size: 7rem;
-  opacity: .07;
-  transform: rotate(10deg);
-}
-
-/* ══ Prayer Countdown Card ════════════════════════════════ */
-.prayer-card {
-  background: #fff;
-  border-radius: 18px;
-  padding: 18px;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 4px 20px rgba(10,92,54,.08);
-  margin-bottom: 16px;
-}
-.prayer-countdown {
-  font-size: 2.2rem;
-  font-weight: 900;
-  color: #0a5c36;
-  letter-spacing: -1px;
-  font-variant-numeric: tabular-nums;
-}
-.prayer-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 14px;
-  border-radius: 20px;
-  font-size: .75rem;
-  font-weight: 700;
-  cursor: pointer;
-  border: none;
-}
-.prayer-pill.active { background: #0a5c36; color: #fff; }
-.prayer-pill.done   { background: #f0fdf4; color: #166534; }
-.prayer-pill.next   { background: #fef3c7; color: #92400e; border: 2px solid #fbbf24; }
-.prayer-pill.upcoming { background: #f8fafc; color: #64748b; }
-
-/* ══ Daily Content Card ═══════════════════════════════════ */
-.daily-card {
-  background: #fff;
-  border-radius: 16px;
-  border: 1px solid #e2e8f0;
-  overflow: hidden;
-  margin-bottom: 16px;
-  transition: transform .2s, box-shadow .2s;
-}
-.daily-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0,0,0,.08);
-}
-.daily-card-header {
-  padding: 14px 16px 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.daily-card-body {
-  padding: 12px 16px 16px;
-}
-.arabic-text {
-  font-family: 'Amiri', serif;
-  font-size: 1.25rem;
-  direction: rtl;
-  text-align: right;
-  line-height: 2;
-  color: #1e293b;
-  background: linear-gradient(135deg, #fef9ee, #fffdf7);
-  border-radius: 10px;
-  padding: 12px 14px;
-  margin-bottom: 10px;
-  border-right: 3px solid #c9973e;
-}
-.hindi-text {
-  font-size: .88rem;
-  color: #334155;
-  line-height: 1.7;
-}
-.share-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 7px 14px;
-  border-radius: 10px;
-  font-size: .75rem;
-  font-weight: 700;
-  background: #25D366;
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  text-decoration: none;
-  transition: opacity .2s;
-}
-.share-btn:hover { opacity: .85; color: #fff; }
-.source-tag {
-  font-size: .7rem;
-  color: #94a3b8;
-  background: #f8fafc;
-  padding: 3px 10px;
-  border-radius: 20px;
-  display: inline-block;
-  margin-top: 8px;
-}
-
-/* ══ Feed Post ════════════════════════════════════════════ */
-.feed-post {
-  background: #fff;
-  border-radius: 16px;
-  border: 1px solid #e2e8f0;
-  margin-bottom: 14px;
-  overflow: hidden;
-  transition: transform .15s;
-}
-.feed-post:hover { transform: translateY(-1px); }
-.feed-post-header {
-  padding: 14px 16px 10px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.feed-post-avatar {
-  width: 40px; height: 40px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #0a5c36, #2da870);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.1rem;
-  flex-shrink: 0;
-}
-.feed-post-body { padding: 0 16px 14px; }
-.feed-post-img {
-  width: 100%;
-  max-height: 240px;
-  object-fit: cover;
-  margin-bottom: 12px;
-}
-.post-type-badge {
-  font-size: .65rem;
-  padding: 2px 8px;
-  border-radius: 20px;
-  font-weight: 700;
-  display: inline-block;
-}
-.badge-ann      { background: #fef3c7; color: #92400e; }
-.badge-event    { background: #eff6ff; color: #1e40af; }
-.badge-bayan    { background: #f0fdf4; color: #166534; }
-.badge-reminder { background: #fdf4ff; color: #6b21a8; }
-
-/* ══ Quick Actions ════════════════════════════════════════ */
-.qa-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  margin-bottom: 20px;
-}
-.qa-item {
-  text-decoration: none;
-  text-align: center;
-  padding: 14px 8px;
-  border-radius: 14px;
-  transition: transform .2s;
-  border: 1px solid transparent;
-}
-.qa-item:hover { transform: translateY(-3px); }
-.qa-item .qa-icon { font-size: 1.7rem; margin-bottom: 5px; }
-.qa-item .qa-label { font-size: .68rem; font-weight: 700; display: block; }
-
-/* ══ Section Header ═══════════════════════════════════════ */
-.sec-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-.sec-title {
-  font-size: .82rem;
-  font-weight: 800;
-  color: #1e293b;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.sec-link {
-  font-size: .72rem;
-  color: #0a5c36;
-  text-decoration: none;
-  font-weight: 600;
-}
-
-/* ══ Masjid Empty State ═══════════════════════════════════ */
-.join-masjid-card {
-  background: linear-gradient(135deg, #fef9ee, #fffdf7);
-  border: 2px dashed #fbbf24;
-  border-radius: 16px;
-  padding: 24px;
-  text-align: center;
-  margin-bottom: 16px;
-}
-
-/* ══ Pulse animation ═════════════════════════════════════ */
-@keyframes pulse-dot {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: .5; transform: scale(1.3); }
-}
-.live-dot {
-  width: 8px; height: 8px;
-  background: #22c55e;
-  border-radius: 50%;
-  display: inline-block;
-  animation: pulse-dot 1.5s infinite;
-  margin-right: 4px;
-}
-</style>
-{% endblock %}
+{% block title %}Dashboard - Masjid Connect{% endblock %}
 
 {% block content %}
-
-<!-- ═══ GREETING BANNER ═══════════════════════════════════ -->
-<div class="greeting-banner mb-4">
-  <div style="font-size:.75rem;color:#86efac;margin-bottom:4px" id="timeGreeting">السلام علیکم</div>
-  <div style="font-size:1.3rem;font-weight:800;color:#fff;margin-bottom:2px">
-    {{ user.name }} 🌙
-  </div>
-  <div style="font-size:.78rem;color:#a7f3d0">
-    {% if user.masjid %}{{ user.masjid.name }}{% else %}Masjid Connect{% endif %}
-  </div>
+<!-- Greeting Banner -->
+<div class="bg-gradient-to-br from-emerald-800 via-emerald-700 to-emerald-600 rounded-2xl p-5 mb-6 text-white relative overflow-hidden">
+    <div class="absolute -right-4 -top-4 text-8xl opacity-10">
+        <svg class="w-32 h-32" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 1.74.5 3.37 1.41 4.84.95 1.54 2.2 2.86 3.16 4.4.47.75.81 1.45 1.17 2.26l.26.55.26-.55c.36-.81.7-1.51 1.17-2.26.96-1.54 2.21-2.86 3.16-4.4C16.5 12.37 17 10.74 17 9c0-3.87-3.13-7-7-7zm0 9.75a2.5 2.5 0 010-5 2.5 2.5 0 010 5z"/>
+        </svg>
+    </div>
+    <p id="timeGreeting" class="text-sm text-emerald-200 mb-1">Assalamu Alaikum</p>
+    <h1 class="text-xl font-bold mb-1">{{ user.name }}</h1>
+    <p class="text-sm text-emerald-200">
+        {% if user.masjid %}{{ user.masjid.name }}{% else %}Masjid Connect{% endif %}
+    </p>
 </div>
 
-<!-- ═══ PRAYER TIMES LIVE CARD ════════════════════════════ -->
-<div class="prayer-card mb-4">
-  <div class="d-flex align-items-center justify-content-between mb-3">
-    <div>
-      <div style="font-size:.7rem;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.5px">
-        <span class="live-dot"></span>Next Prayer
-      </div>
-      <div id="nextPrayerName" style="font-size:1.1rem;font-weight:800;color:#1e293b">Loading...</div>
+<!-- Prayer Times Card -->
+<div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-6">
+    <div class="flex items-center justify-between mb-4">
+        <div>
+            <div class="flex items-center gap-2 text-xs text-gray-500 font-medium uppercase tracking-wide mb-1">
+                <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                Next Prayer
+            </div>
+            <p id="nextPrayerName" class="text-lg font-bold text-gray-900">Loading...</p>
+        </div>
+        <div id="countdown" class="text-3xl font-bold text-emerald-700 tabular-nums tracking-tight">--:--:--</div>
     </div>
-    <div class="prayer-countdown" id="countdown">--:--:--</div>
-  </div>
 
-  {% if prayer_times %}
-  <!-- Masjid ki actual prayer times -->
-  <div style="display:flex;gap:8px;flex-wrap:wrap">
-    {% for pt in prayer_times %}
-    <div class="prayer-pill upcoming" id="pill-{{ pt.prayer_name }}"
-         data-name="{{ pt.prayer_name }}"
-         data-time="{{ pt.adhan_time|time:'H:i' }}">
-      <span>{{ pt.get_prayer_name_display }}</span>
-      <span style="opacity:.7">{{ pt.adhan_time|time:'g:i A' }}</span>
+    {% if prayer_times %}
+    <div class="flex flex-wrap gap-2">
+        {% for pt in prayer_times %}
+        <div class="prayer-pill px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all"
+             id="pill-{{ pt.prayer_name }}"
+             data-name="{{ pt.prayer_name }}"
+             data-time="{{ pt.adhan_time|time:'H:i' }}">
+            <span>{{ pt.get_prayer_name_display }}</span>
+            <span class="opacity-70">{{ pt.adhan_time|time:'g:i A' }}</span>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-4 bg-gray-50 rounded-xl">
+        <p class="text-sm text-gray-600 mb-2">Namaz timings abhi set nahi hain</p>
+        {% if user.is_any_admin %}
+        <a href="{% url 'prayer_setup' %}" class="text-sm text-emerald-600 font-semibold hover:text-emerald-700">
+            Set Prayer Times
+        </a>
+        {% else %}
+        <p class="text-xs text-gray-400">Apne Molana se set karwayein</p>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+<!-- Quick Actions Grid -->
+<div class="grid grid-cols-4 gap-3 mb-6">
+    <a href="{% url 'quran_home' %}" class="group flex flex-col items-center p-3 bg-amber-50 border border-amber-100 rounded-xl hover:bg-amber-100 transition-all">
+        <div class="w-10 h-10 bg-amber-100 group-hover:bg-amber-200 rounded-xl flex items-center justify-center mb-2 transition-colors">
+            <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+            </svg>
+        </div>
+        <span class="text-xs font-semibold text-amber-800">Quran</span>
+    </a>
+    
+    <a href="{% url 'library_home' %}" class="group flex flex-col items-center p-3 bg-emerald-50 border border-emerald-100 rounded-xl hover:bg-emerald-100 transition-all">
+        <div class="w-10 h-10 bg-emerald-100 group-hover:bg-emerald-200 rounded-xl flex items-center justify-center mb-2 transition-colors">
+            <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+            </svg>
+        </div>
+        <span class="text-xs font-semibold text-emerald-800">Library</span>
+    </a>
+    
+    <a href="{% url 'jamaat_list' %}" class="group flex flex-col items-center p-3 bg-blue-50 border border-blue-100 rounded-xl hover:bg-blue-100 transition-all">
+        <div class="w-10 h-10 bg-blue-100 group-hover:bg-blue-200 rounded-xl flex items-center justify-center mb-2 transition-colors">
+            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+            </svg>
+        </div>
+        <span class="text-xs font-semibold text-blue-800">Jamaat</span>
+    </a>
+    
+    <a href="{% url 'ann_list' %}" class="group flex flex-col items-center p-3 bg-purple-50 border border-purple-100 rounded-xl hover:bg-purple-100 transition-all">
+        <div class="w-10 h-10 bg-purple-100 group-hover:bg-purple-200 rounded-xl flex items-center justify-center mb-2 transition-colors">
+            <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/>
+            </svg>
+        </div>
+        <span class="text-xs font-semibold text-purple-800">Khabren</span>
+    </a>
+    
+    <a href="{% url 'learning_home' %}" class="group flex flex-col items-center p-3 bg-red-50 border border-red-100 rounded-xl hover:bg-red-100 transition-all">
+        <div class="w-10 h-10 bg-red-100 group-hover:bg-red-200 rounded-xl flex items-center justify-center mb-2 transition-colors">
+            <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+            </svg>
+        </div>
+        <span class="text-xs font-semibold text-red-800">6 Sifaat</span>
+    </a>
+    
+    <a href="{% url 'schedule_list' %}" class="group flex flex-col items-center p-3 bg-teal-50 border border-teal-100 rounded-xl hover:bg-teal-100 transition-all">
+        <div class="w-10 h-10 bg-teal-100 group-hover:bg-teal-200 rounded-xl flex items-center justify-center mb-2 transition-colors">
+            <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+        </div>
+        <span class="text-xs font-semibold text-teal-800">Schedule</span>
+    </a>
+    
+    <a href="{% url 'directory' %}" class="group flex flex-col items-center p-3 bg-orange-50 border border-orange-100 rounded-xl hover:bg-orange-100 transition-all">
+        <div class="w-10 h-10 bg-orange-100 group-hover:bg-orange-200 rounded-xl flex items-center justify-center mb-2 transition-colors">
+            <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+            </svg>
+        </div>
+        <span class="text-xs font-semibold text-orange-800">Directory</span>
+    </a>
+    
+    <a href="{% url 'donation_list' %}" class="group flex flex-col items-center p-3 bg-emerald-50 border border-emerald-100 rounded-xl hover:bg-emerald-100 transition-all">
+        <div class="w-10 h-10 bg-emerald-100 group-hover:bg-emerald-200 rounded-xl flex items-center justify-center mb-2 transition-colors">
+            <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+            </svg>
+        </div>
+        <span class="text-xs font-semibold text-emerald-800">Sadqah</span>
+    </a>
+</div>
+
+<!-- Daily Hadith -->
+{% if today_hadith %}
+<div class="mb-6">
+    <div class="flex items-center justify-between mb-3">
+        <h2 class="text-sm font-bold text-gray-900 flex items-center gap-2">
+            <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+            </svg>
+            Aaj ka Hadith
+        </h2>
+    </div>
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center">
+                    <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                    </svg>
+                </div>
+                <span class="text-sm font-semibold text-amber-700">Hadith e Mubarak</span>
+            </div>
+            <a href="https://wa.me/?text={{ today_hadith.hindi_text|urlencode }}%0A%0A— {{ today_hadith.source|urlencode }}%0A%0AMasjid Connect se" 
+               target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-500 hover:bg-green-600 text-white text-xs font-semibold rounded-lg transition-colors">
+                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                Share
+            </a>
+        </div>
+        <div class="p-5">
+            {% if today_hadith.arabic_text %}
+            <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-4 mb-4 border-r-4 border-amber-400 text-right font-serif text-xl leading-loose text-gray-800" dir="rtl">
+                {{ today_hadith.arabic_text }}
+            </div>
+            {% endif %}
+            <p class="text-gray-700 leading-relaxed">{{ today_hadith.hindi_text }}</p>
+            {% if today_hadith.source %}
+            <span class="inline-block mt-3 px-3 py-1 bg-gray-100 text-gray-500 text-xs rounded-full">{{ today_hadith.source }}</span>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Daily Dua -->
+{% if today_dua %}
+<div class="mb-6">
+    <div class="flex items-center justify-between mb-3">
+        <h2 class="text-sm font-bold text-gray-900 flex items-center gap-2">
+            <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11"/>
+            </svg>
+            Aaj ki Dua
+        </h2>
+    </div>
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center">
+                    <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11"/>
+                    </svg>
+                </div>
+                <span class="text-sm font-semibold text-emerald-700">Aaj ki Dua</span>
+            </div>
+            <a href="https://wa.me/?text={{ today_dua.hindi_text|urlencode }}%0A%0AMasjid Connect se"
+               target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-500 hover:bg-green-600 text-white text-xs font-semibold rounded-lg transition-colors">
+                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                Share
+            </a>
+        </div>
+        <div class="p-5">
+            {% if today_dua.arabic_text %}
+            <div class="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-4 mb-4 border-r-4 border-emerald-400 text-right font-serif text-xl leading-loose text-gray-800" dir="rtl">
+                {{ today_dua.arabic_text }}
+            </div>
+            {% endif %}
+            <p class="text-gray-700 leading-relaxed">{{ today_dua.hindi_text }}</p>
+            {% if today_dua.source %}
+            <span class="inline-block mt-3 px-3 py-1 bg-gray-100 text-gray-500 text-xs rounded-full">{{ today_dua.source }}</span>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Masjid Feed -->
+{% if feed_posts or markaz_anns %}
+<div class="mb-6">
+    <div class="flex items-center justify-between mb-3">
+        <h2 class="text-sm font-bold text-gray-900 flex items-center gap-2">
+            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+            </svg>
+            Masjid Feed
+        </h2>
+        {% if user.is_any_admin %}
+        <a href="{% url 'post_create' %}" class="text-sm text-emerald-600 hover:text-emerald-700 font-medium">+ Post karo</a>
+        {% endif %}
+    </div>
+
+    <!-- Feed Posts -->
+    {% for post in feed_posts %}
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 mb-4 overflow-hidden">
+        <div class="p-4 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-white">
+                {% if post.post_type == 'announcement' %}
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
+                {% elif post.post_type == 'event' %}
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                {% else %}
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                {% endif %}
+            </div>
+            <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                    <span class="text-sm font-semibold text-gray-900">{{ post.masjid.name }}</span>
+                    <span class="px-2 py-0.5 text-xs font-semibold rounded-full
+                        {% if post.post_type == 'announcement' %}bg-amber-100 text-amber-700
+                        {% elif post.post_type == 'event' %}bg-blue-100 text-blue-700
+                        {% else %}bg-purple-100 text-purple-700{% endif %}">
+                        {{ post.get_post_type_display }}
+                    </span>
+                    {% if post.is_pinned %}
+                    <span class="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-semibold rounded-full">Pinned</span>
+                    {% endif %}
+                </div>
+                <p class="text-xs text-gray-500">{{ post.created_at|timesince }} pehle</p>
+            </div>
+        </div>
+        {% if post.image %}
+        <img src="{{ post.image.url }}" class="w-full max-h-60 object-cover" alt="{{ post.title }}">
+        {% endif %}
+        <div class="p-4 pt-2">
+            <h3 class="font-semibold text-gray-900 mb-1">{{ post.title }}</h3>
+            <p class="text-sm text-gray-600 leading-relaxed">{{ post.content }}</p>
+            {% if post.event_date %}
+            <div class="mt-3 px-3 py-2 bg-blue-50 rounded-lg text-sm text-blue-700 font-medium">
+                {{ post.event_date|date:"d M Y, g:i A" }}
+            </div>
+            {% endif %}
+            <a href="https://wa.me/?text={{ post.title|urlencode }}%0A{{ post.content|urlencode }}%0A%0AMasjid Connect"
+               target="_blank" class="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-500 hover:bg-green-600 text-white text-xs font-semibold rounded-lg transition-colors">
+                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                WhatsApp
+            </a>
+        </div>
     </div>
     {% endfor %}
-  </div>
-  {% else %}
-  <!-- No prayer times set -->
-  <div style="text-align:center;padding:12px;background:#f8fafc;border-radius:12px">
-    <div style="font-size:.82rem;color:#64748b">Namaz timings abhi set nahi hain</div>
-    {% if user.is_any_admin %}
-    <a href="{% url 'prayer_setup' %}" style="color:#0a5c36;font-size:.78rem;font-weight:700;text-decoration:none">
-      ➕ Set Prayer Times →
-    </a>
-    {% else %}
-    <div style="font-size:.72rem;color:#94a3b8">Apne Molana se set karwayein</div>
-    {% endif %}
-  </div>
-  {% endif %}
-</div>
 
-<!-- ═══ QUICK ACTIONS ═════════════════════════════════════ -->
-<div class="qa-grid mb-4">
-  <a href="{% url 'quran_home' %}" class="qa-item" style="background:#fef9ee;border-color:#fde68a">
-    <div class="qa-icon">📖</div>
-    <span class="qa-label" style="color:#92400e">Quran</span>
-  </a>
-  <a href="{% url 'library_home' %}" class="qa-item" style="background:#f0fdf4;border-color:#dcfce7">
-    <div class="qa-icon">📚</div>
-    <span class="qa-label" style="color:#166534">Library</span>
-  </a>
-  <a href="{% url 'jamaat_list' %}" class="qa-item" style="background:#eff6ff;border-color:#bfdbfe">
-    <div class="qa-icon">🧭</div>
-    <span class="qa-label" style="color:#1e40af">Jamaat</span>
-  </a>
-  <a href="{% url 'ann_list' %}" class="qa-item" style="background:#fdf4ff;border-color:#e9d5ff">
-    <div class="qa-icon">📢</div>
-    <span class="qa-label" style="color:#6b21a8">Khabren</span>
-  </a>
-  <a href="{% url 'learning_home' %}" class="qa-item" style="background:#fef2f2;border-color:#fecaca">
-    <div class="qa-icon">🌱</div>
-    <span class="qa-label" style="color:#991b1b">6 Sifaat</span>
-  </a>
-  <a href="{% url 'schedule_list' %}" class="qa-item" style="background:#f0fdf4;border-color:#dcfce7">
-    <div class="qa-icon">📅</div>
-    <span class="qa-label" style="color:#166534">Schedule</span>
-  </a>
-  <a href="{% url 'directory' %}" class="qa-item" style="background:#fffbeb;border-color:#fde68a">
-    <div class="qa-icon">👥</div>
-    <span class="qa-label" style="color:#92400e">Directory</span>
-  </a>
-  <a href="{% url 'donation_list' %}" class="qa-item" style="background:#fef9ee;border-color:#fde68a">
-    <div class="qa-icon">💚</div>
-    <span class="qa-label" style="color:#166534">Sadqah</span>
-  </a>
-</div>
-
-<!-- ═══ DAILY HADITH ══════════════════════════════════════ -->
-{% if today_hadith %}
-<div class="sec-head">
-  <div class="sec-title">📜 Aaj ka Hadith</div>
-</div>
-<div class="daily-card">
-  <div class="daily-card-header">
-    <div style="display:flex;align-items:center;gap:8px">
-      <div style="width:32px;height:32px;background:linear-gradient(135deg,#fef9ee,#fde68a);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem">📜</div>
-      <div style="font-size:.78rem;font-weight:700;color:#92400e">Hadith e Mubarak</div>
-    </div>
-    <a href="https://wa.me/?text={{ today_hadith.hindi_text|urlencode }}%0A%0A— {{ today_hadith.source|urlencode }}%0A%0AMasjid Connect se" 
-       target="_blank" class="share-btn">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-      Share
-    </a>
-  </div>
-  <div class="daily-card-body">
-    {% if today_hadith.arabic_text %}
-    <div class="arabic-text">{{ today_hadith.arabic_text }}</div>
-    {% endif %}
-    <div class="hindi-text">{{ today_hadith.hindi_text }}</div>
-    {% if today_hadith.source %}
-    <div class="source-tag">📚 {{ today_hadith.source }}</div>
-    {% endif %}
-  </div>
-</div>
-{% endif %}
-
-<!-- ═══ DAILY DUA ══════════════════════════════════════════ -->
-{% if today_dua %}
-<div class="sec-head">
-  <div class="sec-title">🤲 Aaj ki Dua</div>
-</div>
-<div class="daily-card">
-  <div class="daily-card-header">
-    <div style="display:flex;align-items:center;gap:8px">
-      <div style="width:32px;height:32px;background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem">🤲</div>
-      <div style="font-size:.78rem;font-weight:700;color:#166534">Aaj ki Dua</div>
-    </div>
-    <a href="https://wa.me/?text={{ today_dua.hindi_text|urlencode }}%0A%0AMasjid Connect se"
-       target="_blank" class="share-btn">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-      Share
-    </a>
-  </div>
-  <div class="daily-card-body">
-    {% if today_dua.arabic_text %}
-    <div class="arabic-text">{{ today_dua.arabic_text }}</div>
-    {% endif %}
-    <div class="hindi-text">{{ today_dua.hindi_text }}</div>
-    {% if today_dua.source %}
-    <div class="source-tag">📚 {{ today_dua.source }}</div>
-    {% endif %}
-  </div>
-</div>
-{% endif %}
-
-<!-- ═══ MASJID FEED ════════════════════════════════════════ -->
-{% if feed_posts or markaz_anns %}
-<div class="sec-head">
-  <div class="sec-title">🕌 Masjid Feed</div>
-  {% if user.is_any_admin %}
-  <a href="{% url 'post_create' %}" class="sec-link">+ Post karo</a>
-  {% endif %}
-</div>
-
-{% for post in feed_posts %}
-<div class="feed-post">
-  <div class="feed-post-header">
-    <div class="feed-post-avatar">
-      {% if post.post_type == 'announcement' %}📢
-      {% elif post.post_type == 'event' %}📅
-      {% elif post.post_type == 'bayan' %}🎧
-      {% elif post.post_type == 'reminder' %}🔔
-      {% else %}📷{% endif %}
-    </div>
-    <div style="flex:1;min-width:0">
-      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-        <div style="font-size:.85rem;font-weight:700;color:#1e293b">{{ post.masjid.name }}</div>
-        <span class="post-type-badge {% if post.post_type == 'announcement' %}badge-ann{% elif post.post_type == 'event' %}badge-event{% elif post.post_type == 'bayan' %}badge-bayan{% else %}badge-reminder{% endif %}">
-          {{ post.get_post_type_display }}
-        </span>
-        {% if post.is_pinned %}<span style="font-size:.65rem;background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:20px;font-weight:700">📌 Pinned</span>{% endif %}
-      </div>
-      <div style="font-size:.72rem;color:#94a3b8">{{ post.created_at|timesince }} pehle</div>
-    </div>
-  </div>
-  {% if post.image %}
-  <img src="{{ post.image.url }}" class="feed-post-img" alt="{{ post.title }}">
-  {% endif %}
-  <div class="feed-post-body">
-    <div style="font-size:.9rem;font-weight:700;color:#1e293b;margin-bottom:6px">{{ post.title }}</div>
-    <div style="font-size:.83rem;color:#475569;line-height:1.6">{{ post.content }}</div>
-    {% if post.event_date %}
-    <div style="margin-top:10px;background:#eff6ff;border-radius:10px;padding:8px 12px;font-size:.78rem;color:#1e40af;font-weight:600">
-      📅 {{ post.event_date|date:"d M Y, g:i A" }}
-    </div>
-    {% endif %}
-    <div style="margin-top:10px;display:flex;gap:8px">
-      <a href="https://wa.me/?text={{ post.title|urlencode }}%0A{{ post.content|urlencode }}%0A%0AMasjid Connect"
-         target="_blank" class="share-btn" style="font-size:.72rem;padding:6px 12px">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-        WhatsApp
-      </a>
-    </div>
-  </div>
-</div>
-{% endfor %}
-
-<!-- Announcements as feed -->
-{% for ann in markaz_anns %}
-<div class="feed-post">
-  <div class="feed-post-header">
-    <div class="feed-post-avatar">
-      {% if ann.target_type == 'markaz' %}🌐{% elif ann.target_type == 'city_molanas' %}👥{% else %}🕌{% endif %}
-    </div>
-    <div style="flex:1">
-      <div style="display:flex;align-items:center;gap:6px">
-        <div style="font-size:.85rem;font-weight:700;color:#1e293b">
-          {% if ann.target_type == 'markaz' %}Markaz Announcement{% else %}{{ ann.masjid.name|default:"Masjid" }}{% endif %}
+    <!-- Announcements -->
+    {% for ann in markaz_anns %}
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 mb-4 overflow-hidden">
+        <div class="p-4 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/>
+                </svg>
+            </div>
+            <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2">
+                    <span class="text-sm font-semibold text-gray-900">
+                        {% if ann.target_type == 'markaz' %}Markaz Announcement{% else %}{{ ann.masjid.name|default:"Masjid" }}{% endif %}
+                    </span>
+                    {% if ann.is_important %}
+                    <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                    {% endif %}
+                </div>
+                <p class="text-xs text-gray-500">{{ ann.created_at|timesince }} pehle - {{ ann.created_by.name }}</p>
+            </div>
         </div>
-        {% if ann.is_important %}
-        <span style="width:7px;height:7px;background:#dc2626;border-radius:50%;display:inline-block;animation:pulse-dot 1s infinite"></span>
-        {% endif %}
-      </div>
-      <div style="font-size:.72rem;color:#94a3b8">{{ ann.created_at|timesince }} pehle • {{ ann.created_by.name }}</div>
+        <div class="p-4 pt-0">
+            <h3 class="font-semibold text-gray-900 mb-1">{{ ann.title }}</h3>
+            <p class="text-sm text-gray-600 leading-relaxed">{{ ann.message }}</p>
+            <a href="https://wa.me/?text={{ ann.title|urlencode }}%0A{{ ann.message|urlencode }}%0A%0AMasjid Connect"
+               target="_blank" class="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-500 hover:bg-green-600 text-white text-xs font-semibold rounded-lg transition-colors">
+                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                WhatsApp
+            </a>
+        </div>
     </div>
-  </div>
-  <div class="feed-post-body">
-    <div style="font-size:.9rem;font-weight:700;color:#1e293b;margin-bottom:6px">{{ ann.title }}</div>
-    <div style="font-size:.83rem;color:#475569;line-height:1.6">{{ ann.message }}</div>
-    <div style="margin-top:10px">
-      <a href="https://wa.me/?text={{ ann.title|urlencode }}%0A{{ ann.message|urlencode }}%0A%0AMasjid Connect"
-         target="_blank" class="share-btn" style="font-size:.72rem;padding:6px 12px">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-        WhatsApp
-      </a>
-    </div>
-  </div>
+    {% endfor %}
 </div>
-{% endfor %}
-
 {% else %}
-<!-- No masjid joined yet -->
+<!-- Join Masjid CTA -->
 {% if not user.masjid %}
-<div class="join-masjid-card">
-  <div style="font-size:2.5rem;margin-bottom:8px">🕌</div>
-  <div style="font-weight:700;color:#92400e;margin-bottom:4px">Apni Masjid se judein</div>
-  <div style="font-size:.82rem;color:#78350f;margin-bottom:16px">Masjid join karne ke baad feed, announcements aur updates milenge</div>
-  <a href="{% url 'register_namazi_step1' %}" class="btn-gold" style="text-decoration:none;font-size:.82rem">
-    Masjid Join Karo →
-  </a>
+<div class="bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-dashed border-amber-300 rounded-2xl p-6 text-center">
+    <div class="w-16 h-16 mx-auto mb-4 bg-amber-100 rounded-full flex items-center justify-center">
+        <svg class="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+        </svg>
+    </div>
+    <h3 class="font-bold text-amber-800 mb-1">Apni Masjid se judein</h3>
+    <p class="text-sm text-amber-700 mb-4">Masjid join karne ke baad feed, announcements aur updates milenge</p>
+    <a href="{% url 'register_namazi_step1' %}" 
+       class="inline-flex items-center gap-2 px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-xl transition-colors">
+        Masjid Join Karo
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+        </svg>
+    </a>
 </div>
 {% endif %}
 {% endif %}
-
 {% endblock %}
 
 {% block extra_js %}
 <script>
-// ── Time-based Greeting ────────────────────────────────────
+// Time-based Greeting
 const hour = new Date().getHours();
 const greetEl = document.getElementById('timeGreeting');
 if (greetEl) {
-  if (hour < 6)       greetEl.textContent = 'تہجد کا وقت — اٹھیں اور دعا کریں 🌙';
-  else if (hour < 12) greetEl.textContent = 'السلام علیکم — صبح بخیر ☀️';
-  else if (hour < 15) greetEl.textContent = 'السلام علیکم — ظہر کی یاد دہانی 🌤';
-  else if (hour < 18) greetEl.textContent = 'السلام علیکم — عصر کا وقت قریب ہے 🌅';
-  else if (hour < 20) greetEl.textContent = 'السلام علیکم — مغرب کا وقت 🌆';
-  else                greetEl.textContent = 'السلام علیکم — عشاء کا وقت 🌙';
+    if (hour < 6) greetEl.textContent = 'Tahajjud ka waqt';
+    else if (hour < 12) greetEl.textContent = 'Assalamu Alaikum - Subah Bakhair';
+    else if (hour < 15) greetEl.textContent = 'Assalamu Alaikum - Zuhr ki yaad';
+    else if (hour < 18) greetEl.textContent = 'Assalamu Alaikum - Asr ka waqt';
+    else if (hour < 20) greetEl.textContent = 'Assalamu Alaikum - Maghrib ka waqt';
+    else greetEl.textContent = 'Assalamu Alaikum - Isha ka waqt';
 }
 
-// ── Prayer Countdown ──────────────────────────────────────
+// Prayer Countdown
 const prayerPills = document.querySelectorAll('.prayer-pill[data-time]');
 const prayers = [];
 
 prayerPills.forEach(pill => {
-  const [h, m] = pill.dataset.time.split(':').map(Number);
-  prayers.push({
-    name: pill.dataset.name,
-    displayName: pill.querySelector('span:first-child').textContent,
-    hours: h, minutes: m,
-    el: pill
-  });
+    const [h, m] = pill.dataset.time.split(':').map(Number);
+    prayers.push({
+        name: pill.dataset.name,
+        displayName: pill.querySelector('span:first-child').textContent,
+        hours: h, minutes: m,
+        el: pill
+    });
 });
 
 function updateCountdown() {
-  if (!prayers.length) return;
+    if (!prayers.length) return;
 
-  const now = new Date();
-  const nowMins = now.getHours() * 60 + now.getMinutes();
+    const now = new Date();
+    const nowMins = now.getHours() * 60 + now.getMinutes();
 
-  let nextPrayer = null;
-  let minDiff = Infinity;
+    let nextPrayer = null;
+    let minDiff = Infinity;
 
-  prayers.forEach(p => {
-    const pMins = p.hours * 60 + p.minutes;
-    let diff = pMins - nowMins;
-    if (diff < 0) diff += 24 * 60; // next day
-    if (diff < minDiff) {
-      minDiff = diff;
-      nextPrayer = p;
-    }
-  });
+    prayers.forEach(p => {
+        const pMins = p.hours * 60 + p.minutes;
+        let diff = pMins - nowMins;
+        if (diff < 0) diff += 24 * 60;
+        if (diff < minDiff) {
+            minDiff = diff;
+            nextPrayer = p;
+        }
+    });
 
-  // Update pills styling
-  prayers.forEach(p => {
-    const pMins = p.hours * 60 + p.minutes;
-    const diff = pMins - nowMins;
-    p.el.className = 'prayer-pill';
-    if (p === nextPrayer)    p.el.classList.add('next');
-    else if (diff < 0)       p.el.classList.add('done');
-    else                     p.el.classList.add('upcoming');
-  });
+    // Update pills styling
+    prayers.forEach(p => {
+        const pMins = p.hours * 60 + p.minutes;
+        const diff = pMins - nowMins;
+        p.el.className = 'prayer-pill px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all';
+        if (p === nextPrayer) {
+            p.el.classList.add('bg-amber-100', 'text-amber-700', 'ring-2', 'ring-amber-300');
+        } else if (diff < 0) {
+            p.el.classList.add('bg-emerald-100', 'text-emerald-700');
+        } else {
+            p.el.classList.add('bg-gray-100', 'text-gray-600');
+        }
+    });
 
-  // Countdown timer
-  const totalSecs = minDiff * 60 - now.getSeconds();
-  const h = Math.floor(totalSecs / 3600);
-  const m = Math.floor((totalSecs % 3600) / 60);
-  const s = totalSecs % 60;
+    // Countdown timer
+    const totalSecs = minDiff * 60 - now.getSeconds();
+    const h = Math.floor(totalSecs / 3600);
+    const m = Math.floor((totalSecs % 3600) / 60);
+    const s = totalSecs % 60;
 
-  const fmt = n => String(n).padStart(2, '0');
-  document.getElementById('countdown').textContent = `${fmt(h)}:${fmt(m)}:${fmt(s)}`;
-  document.getElementById('nextPrayerName').textContent =
-    nextPrayer ? `${nextPrayer.displayName} tak` : 'Loading...';
+    const fmt = n => String(n).padStart(2, '0');
+    document.getElementById('countdown').textContent = `${fmt(h)}:${fmt(m)}:${fmt(s)}`;
+    document.getElementById('nextPrayerName').textContent = nextPrayer ? `${nextPrayer.displayName} tak` : 'Loading...';
 }
 
 if (prayers.length) {
-  updateCountdown();
-  setInterval(updateCountdown, 1000);
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
 }
 </script>
 {% endblock %}

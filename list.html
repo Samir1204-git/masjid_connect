@@ -1,38 +1,114 @@
 {% extends "base.html" %}
 {% block title %}Masjid Schedule{% endblock %}
+
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-<div><h4 class="fw-bold mb-1" style="color:#0a5c36">📅 Masjid Schedule</h4>
-<p class="text-muted mb-0" style="font-size:.83rem">Fajr Bayan, Maghrib Taleem, Gasht, Mashwara</p></div>
-{% if user.is_any_admin %}<a href="{% url "add_schedule" %}" class="btn-emerald" style="text-decoration:none">+ Add Schedule</a>{% endif %}
+<!-- Header -->
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+    <div>
+        <h1 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+            <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            Masjid Schedule
+        </h1>
+        <p class="text-sm text-gray-500 mt-1">Fajr Bayan, Maghrib Taleem, Gasht, Mashwara</p>
+    </div>
+    {% if user.is_any_admin %}
+    <a href="{% url 'add_schedule' %}" 
+       class="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-xl transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        Add Schedule
+    </a>
+    {% endif %}
 </div>
+
 {% regroup schedules by get_day_of_week_display as day_list %}
 {% for day in day_list %}
-<div class="card mb-3">
-<div class="card-head"><h6>📅 {{ day.grouper }}</h6></div>
-<div class="card-body p-0">
-{% for s in day.list %}
-<div class="d-flex align-items-center gap-3 px-4 py-3" style="border-bottom:1px solid #f1f5f9">
-<div style="width:50px;text-align:center">
-<div style="font-size:1rem;font-weight:800;color:#0a5c36">{{ s.time|time:"H:i" }}</div>
-</div>
-<div style="width:36px;height:36px;background:#f0fdf4;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem">
-{% if s.schedule_type == "fajr_bayan" %}🌅{% elif s.schedule_type == "maghrib_taleem" %}🌆{% elif s.schedule_type == "gasht" %}🚶{% elif s.schedule_type == "mashwara" %}💬{% elif s.schedule_type == "juma" %}🕌{% elif s.schedule_type == "taraweeh" %}🌙{% else %}📌{% endif %}
-</div>
-<div>
-<div class="fw-bold" style="font-size:.87rem">{{ s.title }}</div>
-<div class="text-muted" style="font-size:.74rem">{{ s.get_schedule_type_display }}{% if s.is_recurring %} • Weekly{% endif %}</div>
-{% if s.description %}<div style="font-size:.74rem;color:#64748b">{{ s.description }}</div>{% endif %}
-</div>
-</div>
-{% endfor %}
-</div>
+<div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-4">
+    <!-- Day Header -->
+    <div class="px-5 py-4 border-b border-gray-100 flex items-center gap-2">
+        <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+        </svg>
+        <h2 class="font-semibold text-gray-900">{{ day.grouper }}</h2>
+    </div>
+    
+    <!-- Schedule Items -->
+    <div class="divide-y divide-gray-100">
+        {% for s in day.list %}
+        <div class="flex items-center gap-4 px-5 py-4">
+            <!-- Time -->
+            <div class="w-14 text-center">
+                <p class="text-lg font-bold text-emerald-700">{{ s.time|time:"H:i" }}</p>
+            </div>
+            
+            <!-- Icon -->
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0
+                {% if s.schedule_type == 'fajr_bayan' %}bg-orange-100 text-orange-600
+                {% elif s.schedule_type == 'maghrib_taleem' %}bg-purple-100 text-purple-600
+                {% elif s.schedule_type == 'gasht' %}bg-blue-100 text-blue-600
+                {% elif s.schedule_type == 'mashwara' %}bg-emerald-100 text-emerald-600
+                {% elif s.schedule_type == 'juma' %}bg-amber-100 text-amber-600
+                {% elif s.schedule_type == 'taraweeh' %}bg-indigo-100 text-indigo-600
+                {% else %}bg-gray-100 text-gray-600{% endif %}">
+                {% if s.schedule_type == 'fajr_bayan' %}
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707"/>
+                </svg>
+                {% elif s.schedule_type == 'maghrib_taleem' %}
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                </svg>
+                {% elif s.schedule_type == 'gasht' %}
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                </svg>
+                {% elif s.schedule_type == 'mashwara' %}
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"/>
+                </svg>
+                {% else %}
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                </svg>
+                {% endif %}
+            </div>
+            
+            <!-- Details -->
+            <div class="flex-1 min-w-0">
+                <p class="font-semibold text-gray-900 truncate">{{ s.title }}</p>
+                <p class="text-sm text-gray-500">
+                    {{ s.get_schedule_type_display }}{% if s.is_recurring %} - Weekly{% endif %}
+                </p>
+                {% if s.description %}
+                <p class="text-xs text-gray-400 mt-1 truncate">{{ s.description }}</p>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 </div>
 {% empty %}
-<div class="card"><div class="card-body text-center py-5">
-<div style="font-size:3rem">📅</div>
-<h6 class="text-muted mt-2">Koi schedule nahi</h6>
-{% if user.is_any_admin %}<a href="{% url "add_schedule" %}" class="btn-emerald mt-3" style="text-decoration:none">Pehla Schedule Add Karo</a>{% endif %}
-</div></div>
+<!-- Empty State -->
+<div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center">
+    <div class="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+        </svg>
+    </div>
+    <h3 class="font-semibold text-gray-900 mb-1">Koi schedule nahi</h3>
+    <p class="text-sm text-gray-500 mb-4">No schedules have been added yet</p>
+    {% if user.is_any_admin %}
+    <a href="{% url 'add_schedule' %}" 
+       class="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-xl transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        Pehla Schedule Add Karo
+    </a>
+    {% endif %}
+</div>
 {% endfor %}
 {% endblock %}
