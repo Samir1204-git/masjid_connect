@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Login - Masjid Connect</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Plus Jakarta Sans",sans-serif;min-height:100vh;display:flex;background:#062618}
+.left{flex:1;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px;overflow:hidden}
+.left::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(42,168,112,.15),transparent 60%),linear-gradient(160deg,#062618 0%,#0a3d22 50%,#062618 100%)}
+.geo{position:absolute;inset:0;opacity:.04;background-image:repeating-linear-gradient(60deg,transparent,transparent 35px,rgba(201,151,62,1) 35px,rgba(201,151,62,1) 36px),repeating-linear-gradient(-60deg,transparent,transparent 35px,rgba(201,151,62,1) 35px,rgba(201,151,62,1) 36px)}
+.lc{position:relative;z-index:2;max-width:380px;width:100%;text-align:center}
+.bismillah{font-family:"Amiri",serif;font-size:1.5rem;color:rgba(201,151,62,.75);margin-bottom:20px;direction:rtl}
+.mosque{font-size:4.5rem;display:block;margin-bottom:12px;filter:drop-shadow(0 4px 20px rgba(201,151,62,.5))}
+.lc h1{font-family:"Amiri",serif;color:#e8b84b;font-size:2rem;margin-bottom:6px}
+.lc p{color:rgba(255,255,255,.5);font-size:.85rem;line-height:1.7;margin-bottom:32px}
+.feats{display:flex;flex-direction:column;gap:10px;text-align:left}
+.fi{display:flex;align-items:center;gap:12px;color:rgba(255,255,255,.6);font-size:.8rem}
+.fic{width:34px;height:34px;background:rgba(201,151,62,.12);border:1px solid rgba(201,151,62,.25);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+/* RIGHT SIDE */
+.right{width:480px;background:#f8f6f1;display:flex;align-items:center;justify-content:center;padding:40px 36px;overflow-y:auto}
+.box{width:100%}
+.box h2{font-size:1.5rem;font-weight:800;color:#0a5c36;margin-bottom:4px}
+.sub{color:#64748b;font-size:.82rem;margin-bottom:24px}
+.fg{margin-bottom:16px}
+.fl{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#64748b;margin-bottom:5px;display:block}
+.fc{width:100%;border:1.5px solid #e2e8f0;border-radius:9px;padding:10px 14px;font-size:.87rem;background:#fff;transition:all .2s;font-family:inherit;outline:none}
+.fc:focus{border-color:#1a7a50;box-shadow:0 0 0 3px rgba(26,122,80,.12)}
+.btn-l{width:100%;background:linear-gradient(135deg,#0a5c36,#2da870);color:#fff;border:none;border-radius:10px;padding:12px;font-size:.9rem;font-weight:700;cursor:pointer;transition:all .2s;font-family:inherit;margin-top:4px}
+.btn-l:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(10,92,54,.35)}
+.err{background:#fef2f2;border-radius:9px;padding:10px 14px;color:#991b1b;font-size:.82rem;margin-bottom:14px}
+
+/* REGISTER OPTIONS */
+.reg-divider{margin:24px 0;position:relative;text-align:center}
+.reg-divider::before{content:"";position:absolute;top:50%;left:0;right:0;height:1px;background:#e2e8f0}
+.reg-divider span{background:#f8f6f1;padding:0 14px;color:#94a3b8;font-size:.72rem;position:relative;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+
+.reg-title{font-size:.75rem;font-weight:700;color:#475569;text-align:center;margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px}
+.reg-options{display:flex;flex-direction:column;gap:8px}
+.reg-option{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:11px;border:1.5px solid #e2e8f0;background:#fff;text-decoration:none;color:inherit;transition:all .2s;cursor:pointer}
+.reg-option:hover{border-color:#1a7a50;background:#f0fdf4;transform:translateX(3px);text-decoration:none;color:inherit}
+.reg-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+.ri-gold{background:linear-gradient(135deg,#fef9ee,#fde68a)}
+.ri-green{background:linear-gradient(135deg,#f0fdf4,#bbf7d0)}
+.ri-purple{background:linear-gradient(135deg,#fdf4ff,#e9d5ff)}
+.reg-label{font-size:.82rem;font-weight:700;color:#0a5c36;margin-bottom:1px}
+.reg-desc{font-size:.7rem;color:#94a3b8;line-height:1.3}
+.reg-arrow{margin-left:auto;color:#cbd5e1;font-size:.8rem}
+
+@media(max-width:768px){body{flex-direction:column}.left{min-height:200px;padding:24px}.feats{display:none}.right{width:100%;padding:24px 20px}}
+</style>
+</head>
+<body>
+<div class="left">
+<div class="geo"></div>
+<div class="lc">
+<div class="bismillah">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ</div>
+<span class="mosque">🕌</span>
+<h1>Masjid Connect</h1>
+<p>Markaz se lekar har namazi tak — ek platform, ek community</p>
+<div class="feats">
+<div class="fi"><div class="fic">⭐</div><span>Markaz → Molana → Namazi hierarchy</span></div>
+<div class="fi"><div class="fic">📢</div><span>3 level announcements — markaz, city, masjid</span></div>
+<div class="fi"><div class="fic">💚</div><span>Zakat, Sadqah, Lillah donation system</span></div>
+<div class="fi"><div class="fic">👥</div><span>Community directory + Direct messaging</span></div>
+<div class="fi"><div class="fic">🧭</div><span>Jamaat tracker — 3 din, 10 din, 40 din</span></div>
+<div class="fi"><div class="fic">📖</div><span>6 Sifaat, Namaz guide, Duayein</span></div>
+</div>
+</div>
+</div>
+
+<div class="right">
+<div class="box">
+<h2>Assalamu Alaikum 👋</h2>
+<p class="sub">Login karo ya naya account banao</p>
+
+{% if messages %}{% for m in messages %}<div class="err">{{ m }}</div>{% endfor %}{% endif %}
+
+<form method="POST">{% csrf_token %}
+<div class="fg"><label class="fl">📱 Mobile Number</label><input type="text" name="mobile" class="fc" placeholder="9876543210" required autofocus></div>
+<div class="fg"><label class="fl">🔒 Password</label><input type="password" name="password" class="fc" placeholder="••••••••" required></div>
+<button type="submit" class="btn-l">Login Karo →</button>
+</form>
+
+<div class="reg-divider"><span>ya naya account banao</span></div>
+
+<div class="reg-title">Aap kaun hain? Choose karo 👇</div>
+<div class="reg-options">
+
+<a href="{% url "register_markaz_step1" %}" class="reg-option">
+<div class="reg-icon ri-gold">⭐</div>
+<div>
+<div class="reg-label">Markaz Masjid Molana</div>
+<div class="reg-desc">Main apni city me Markaz Masjid ka Molana hun → Pro Admin se approval lungi</div>
+</div>
+<div class="reg-arrow">›</div>
+</a>
+
+<a href="{% url "register_molana_step1" %}" class="reg-option">
+<div class="reg-icon ri-green">🕌</div>
+<div>
+<div class="reg-label">Masjid Molana</div>
+<div class="reg-desc">Main ek Masjid ka Molana hun → Apni city ke Markaz Molana se approval lunga</div>
+</div>
+<div class="reg-arrow">›</div>
+</a>
+
+<a href="{% url "register_namazi_step1" %}" class="reg-option">
+<div class="reg-icon ri-purple">🤲</div>
+<div>
+<div class="reg-label">Namazi (Community Member)</div>
+<div class="reg-desc">Main apni masjid se judna chahta hun → Molana approve karenge</div>
+</div>
+<div class="reg-arrow">›</div>
+</a>
+
+</div>
+</div>
+</div>
+</body></html>

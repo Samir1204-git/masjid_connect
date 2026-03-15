@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Naya Post{% endblock %}
+{% block content %}
+<div class="d-flex align-items-center gap-2 mb-4">
+  <a href="{% url 'feed_home' %}" style="color:#64748b;text-decoration:none;font-size:1.3rem">←</a>
+  <h4 class="fw-bold mb-0" style="color:#0a5c36">📢 Naya Post</h4>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <div class="mb-3">
+        <label style="font-size:.82rem;font-weight:600;color:#374151;margin-bottom:6px;display:block">Post Type</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          {% for val, label in post_types %}
+          <label style="cursor:pointer">
+            <input type="radio" name="post_type" value="{{ val }}" {% if forloop.first %}checked{% endif %} style="display:none" class="post-type-radio">
+            <span class="post-type-btn" style="display:inline-block;padding:8px 14px;border-radius:20px;font-size:.78rem;font-weight:700;border:2px solid #e2e8f0;color:#64748b;transition:all .15s">{{ label }}</span>
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label style="font-size:.82rem;font-weight:600;color:#374151;margin-bottom:6px;display:block">Title *</label>
+        <input type="text" name="title" class="form-control" placeholder="Jummah Bayan — Kal raat 9 baje" required>
+      </div>
+
+      <div class="mb-3">
+        <label style="font-size:.82rem;font-weight:600;color:#374151;margin-bottom:6px;display:block">Content *</label>
+        <textarea name="content" class="form-control" rows="4" placeholder="Poori details likhein..." required></textarea>
+      </div>
+
+      <div class="mb-3">
+        <label style="font-size:.82rem;font-weight:600;color:#374151;margin-bottom:6px;display:block">Image (optional)</label>
+        <input type="file" name="image" class="form-control" accept="image/*">
+      </div>
+
+      <div class="mb-3">
+        <label class="d-flex align-items-center gap-2" style="cursor:pointer">
+          <input type="checkbox" name="is_pinned">
+          <span style="font-size:.82rem;color:#374151">📌 Pin karo (upar dikhega)</span>
+        </label>
+      </div>
+
+      <button type="submit" class="btn-emerald" style="border:none;width:100%;padding:12px;font-size:.9rem;font-weight:700;cursor:pointer;border-radius:12px">
+        Post Karo 📢
+      </button>
+    </form>
+  </div>
+</div>
+
+{% endblock %}
+{% block extra_js %}
+<script>
+// Post type button styling
+document.querySelectorAll('.post-type-radio').forEach(radio => {
+  radio.addEventListener('change', function() {
+    document.querySelectorAll('.post-type-btn').forEach(btn => {
+      btn.style.background = '';
+      btn.style.color = '#64748b';
+      btn.style.borderColor = '#e2e8f0';
+    });
+    if (this.checked) {
+      const btn = this.nextElementSibling;
+      btn.style.background = '#0a5c36';
+      btn.style.color = '#fff';
+      btn.style.borderColor = '#0a5c36';
+    }
+  });
+});
+// Trigger first
+document.querySelector('.post-type-radio').dispatchEvent(new Event('change'));
+</script>
+{% endblock %}

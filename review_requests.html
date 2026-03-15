@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Join Requests{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+<div><h4 class="fw-bold mb-1" style="color:#0a5c36">🔔 Join Requests</h4>
+<p class="text-muted mb-0" style="font-size:.83rem">Pending approval requests</p></div>
+<span class="badge bg-warning text-dark fs-6">{{ requests|length }} Pending</span>
+</div>
+<div class="card">
+<div class="card-body p-0">
+{% for req in requests %}
+<div class="d-flex align-items-center gap-3 p-3" style="border-bottom:1px solid #f1f5f9">
+<div class="user-avatar-lg">{{ req.user.name|first|upper }}</div>
+<div class="flex-1">
+<div class="fw-bold" style="font-size:.9rem">{{ req.user.name }}</div>
+<div class="text-muted" style="font-size:.78rem">📱 {{ req.user.mobile }} &nbsp;•&nbsp; 🕌 {{ req.masjid.name }} &nbsp;•&nbsp; Role: {{ req.get_role_requested_display }}</div>
+{% if req.message %}<div style="font-size:.78rem;color:#475569;margin-top:3px">💬 {{ req.message }}</div>{% endif %}
+<div style="font-size:.72rem;color:#94a3b8;margin-top:2px">{{ req.created_at|timesince }} pehle</div>
+</div>
+<div class="d-flex gap-2">
+<a href="{% url "approve_request" req.pk %}" class="btn-emerald" style="padding:7px 16px;text-decoration:none;display:inline-block">✓ Approve</a>
+<a href="{% url "reject_request" req.pk %}" style="padding:7px 16px;background:#fef2f2;color:#dc2626;border-radius:9px;border:none;text-decoration:none;font-size:.82rem;font-weight:600">✕ Reject</a>
+</div>
+</div>
+{% empty %}
+<div class="text-center py-5 text-muted">
+<div style="font-size:3rem">✅</div>
+<p class="mt-2">Koi pending request nahi</p>
+</div>
+{% endfor %}
+</div>
+</div>
+{% endblock %}

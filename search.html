@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Library Search{% endblock %}
+{% block content %}
+<div class="d-flex align-items-center gap-2 mb-4">
+  <a href="{% url 'library_home' %}" style="color:#64748b;text-decoration:none;font-size:1.2rem">←</a>
+  <h4 class="fw-bold mb-0" style="color:#0a5c36">🔍 Library Search</h4>
+</div>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <div class="d-flex gap-2 flex-wrap">
+      <input type="text" id="searchInput" class="form-control" value="{{ query }}"
+             placeholder="Koi lafz ya topic dhundho..." style="flex:1;min-width:200px">
+      <select id="langSelect" class="form-select" style="width:auto">
+        <option value="urdu"    {% if lang == 'urdu' %}selected{% endif %}>اردو Urdu</option>
+        <option value="hindi"   {% if lang == 'hindi' %}selected{% endif %}>हिंदी Hindi</option>
+        <option value="gujarati"{% if lang == 'gujarati' %}selected{% endif %}>ગુ Gujarati</option>
+        <option value="english" {% if lang == 'english' %}selected{% endif %}>English</option>
+      </select>
+      <button onclick="doSearch()" class="btn-emerald" style="border:none;cursor:pointer;padding:8px 20px">
+        Search →
+      </button>
+    </div>
+  </div>
+</div>
+
+{% if query %}
+<div style="font-size:.83rem;color:#64748b;margin-bottom:16px">
+  "{{ query }}" ke liye {{ results|length }} result{% if results|length != 1 %}s{% endif %} mile
+</div>
+
+{% if results %}
+{% for r in results %}
+<div class="card mb-3">
+  <div class="card-body">
+    <div style="font-size:.72rem;color:#64748b;margin-bottom:4px">
+      📚 {{ r.chapter.book.title }} &nbsp;•&nbsp; Ch.{{ r.chapter.number }}: {{ r.chapter.title }}
+    </div>
+    <div style="font-size:.85rem;color:#1e293b;line-height:1.7;
+      {% if lang == 'urdu' or lang == 'arabic' %}direction:rtl;text-align:right;font-family:'Amiri',serif;font-size:1rem;{% endif %}">
+      {{ r.content|truncatechars:200 }}
+    </div>
+    <a href="{% url 'library_reader' r.chapter.book.id r.chapter.number %}?lang={{ lang }}"
+       class="btn-ghost mt-2" style="font-size:.75rem;text-decoration:none">Read Chapter →</a>
+  </div>
+</div>
+{% endfor %}
+{% else %}
+<div class="text-center py-4 text-muted">
+  <div style="font-size:2rem;margin-bottom:8px">🔍</div>
+  <div>Koi result nahi mila — doosre alfaz try karein</div>
+</div>
+{% endif %}
+{% endif %}
+
+{% endblock %}
+{% block extra_js %}
+<script>
+function doSearch() {
+  const q = document.getElementById('searchInput').value;
+  const lang = document.getElementById('langSelect').value;
+  window.location.href = `/library/search/?q=${encodeURIComponent(q)}&lang=${lang}`;
+}
+document.getElementById('searchInput').addEventListener('keypress', e => {
+  if (e.key === 'Enter') doSearch();
+});
+</script>
+{% endblock %}

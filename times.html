@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Prayer Times{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+<div>
+<h4 class="fw-bold mb-1" style="color:#0a5c36">🌙 Prayer Times</h4>
+<p class="text-muted mb-0" style="font-size:.83rem">{{ today_date|default:"Aaj ki Namaz" }}</p>
+</div>
+</div>
+
+<div class="row g-3 mb-4">
+{% for pt in prayer_times %}
+<div class="col-6 col-md-4 col-lg-2">
+<div class="card text-center" style="border-radius:14px;{% if pt.is_next %}border:2px solid #c9973e;background:#fef9ee{% endif %}">
+<div class="card-body py-3">
+<div style="font-size:1.6rem;margin-bottom:4px">{{ pt.icon }}</div>
+<div style="font-weight:700;font-size:.85rem;color:#0a5c36">{{ pt.name }}</div>
+<div style="font-size:1rem;font-weight:800;color:#1a7a50;margin-top:2px">{{ pt.time }}</div>
+{% if pt.is_next %}<div style="font-size:.65rem;color:#c9973e;font-weight:700;margin-top:2px">▶ Next</div>{% endif %}
+</div>
+</div>
+</div>
+{% empty %}
+<!-- Default static cards if no DB times -->
+<div class="col-6 col-md-4 col-lg-2"><div class="card text-center" style="border-radius:14px"><div class="card-body py-3"><div style="font-size:1.6rem">🌅</div><div style="font-weight:700;font-size:.85rem;color:#0a5c36">Fajr</div><div style="font-size:1rem;font-weight:800;color:#1a7a50;margin-top:2px">—</div></div></div></div>
+<div class="col-6 col-md-4 col-lg-2"><div class="card text-center" style="border-radius:14px"><div class="card-body py-3"><div style="font-size:1.6rem">☀️</div><div style="font-weight:700;font-size:.85rem;color:#0a5c36">Zuhr</div><div style="font-size:1rem;font-weight:800;color:#1a7a50;margin-top:2px">—</div></div></div></div>
+<div class="col-6 col-md-4 col-lg-2"><div class="card text-center" style="border-radius:14px"><div class="card-body py-3"><div style="font-size:1.6rem">🌤</div><div style="font-weight:700;font-size:.85rem;color:#0a5c36">Asr</div><div style="font-size:1rem;font-weight:800;color:#1a7a50;margin-top:2px">—</div></div></div></div>
+<div class="col-6 col-md-4 col-lg-2"><div class="card text-center" style="border-radius:14px"><div class="card-body py-3"><div style="font-size:1.6rem">🌆</div><div style="font-weight:700;font-size:.85rem;color:#0a5c36">Maghrib</div><div style="font-size:1rem;font-weight:800;color:#1a7a50;margin-top:2px">—</div></div></div></div>
+<div class="col-6 col-md-4 col-lg-2"><div class="card text-center" style="border-radius:14px"><div class="card-body py-3"><div style="font-size:1.6rem">🌙</div><div style="font-weight:700;font-size:.85rem;color:#0a5c36">Isha</div><div style="font-size:1rem;font-weight:800;color:#1a7a50;margin-top:2px">—</div></div></div></div>
+{% endfor %}
+</div>
+
+<div class="row g-3">
+<div class="col-6 col-md-3"><a href="{% url "learning_home" %}" style="text-decoration:none;display:block;text-align:center;padding:16px;background:#fef9ee;border-radius:12px;border:1px solid #fde68a"><div style="font-size:1.5rem">🤲</div><div style="font-size:.75rem;font-weight:600;color:#92400e;margin-top:4px">Namaz Guide</div></a></div>
+<div class="col-6 col-md-3"><a href="{% url "learning_home" %}" style="text-decoration:none;display:block;text-align:center;padding:16px;background:#eff6ff;border-radius:12px;border:1px solid #bfdbfe"><div style="font-size:1.5rem">💧</div><div style="font-size:.75rem;font-weight:600;color:#1e40af;margin-top:4px">Wuzu Guide</div></a></div>
+<div class="col-6 col-md-3"><a href="{% url "learning_home" %}" style="text-decoration:none;display:block;text-align:center;padding:16px;background:#fdf4ff;border-radius:12px;border:1px solid #e9d5ff"><div style="font-size:1.5rem">📿</div><div style="font-size:.75rem;font-weight:600;color:#6b21a8;margin-top:4px">Duayein</div></a></div>
+<div class="col-6 col-md-3"><a href="{% url "learning_home" %}" style="text-decoration:none;display:block;text-align:center;padding:16px;background:#f0fdf4;border-radius:12px;border:1px solid #dcfce7"><div style="font-size:1.5rem">🕌</div><div style="font-size:.75rem;font-weight:600;color:#166534;margin-top:4px">Sunnatein</div></a></div>
+</div>
+{% endblock %}

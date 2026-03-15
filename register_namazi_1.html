@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Namazi Register — Step 1{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+<div class="col-lg-6">
+<a href="{% url "login" %}" style="color:#64748b;text-decoration:none;font-size:.85rem;display:inline-block;margin-bottom:16px">← Login page</a>
+
+<div style="background:#fdf4ff;border-radius:14px;padding:18px 20px;margin-bottom:20px;border:1px solid #e9d5ff">
+<div style="font-size:1.3rem;margin-bottom:6px">🤲</div>
+<div style="font-size:.87rem;font-weight:700;color:#6b21a8;margin-bottom:4px">Namazi Registration</div>
+<div style="font-size:.78rem;color:#7c3aed;line-height:1.5">Account banao, phir apni masjid chunein. Masjid ke <strong>Molana</strong> aapko approve karenge.</div>
+</div>
+
+<div class="form-card">
+<h5 class="fw-bold mb-4" style="color:#0a5c36">Step 1: Account Banao</h5>
+<form method="post">{% csrf_token %}
+{% for field in form %}
+<div class="mb-3">
+<label class="form-label">{{ field.label }}</label>
+{{ field }}
+{% if field.errors %}<div style="color:#dc2626;font-size:.75rem;margin-top:3px">{{ field.errors.0 }}</div>{% endif %}
+</div>
+{% endfor %}
+<button type="submit" class="btn-emerald w-100 mt-2" style="padding:12px">Aage Bado →</button>
+</form>
+</div>
+</div>
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Users{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+<h4 class="fw-bold mb-0" style="color:#0a5c36">👥 Users</h4>
+<a href="{% url "add_user" %}" class="btn-emerald" style="text-decoration:none">+ Add User</a>
+</div>
+<div class="card">
+<div style="overflow-x:auto">
+<table class="table tbl mb-0">
+<thead><tr><th>#</th><th>Naam</th><th>Mobile</th><th>Role</th><th>Masjid</th><th>City</th><th>Status</th></tr></thead>
+<tbody>
+{% for u in users %}
+<tr>
+<td>{{ forloop.counter }}</td>
+<td><div class="d-flex align-items-center gap-2">
+<div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#1a7a50,#2da870);display:flex;align-items:center;justify-content:center;color:#fff;font-size:.8rem;font-weight:800">{{ u.name|first|upper }}</div>
+{{ u.name }}</div></td>
+<td>{{ u.mobile }}</td>
+<td><span class="role-chip {% if u.is_pro_admin %}chip-pro{% elif u.is_markaz_admin %}chip-markaz{% elif u.is_masjid_admin %}chip-masjid{% else %}chip-namazi{% endif %}">{{ u.get_role_display }}</span></td>
+<td>{{ u.masjid.name|default:"—" }}</td>
+<td>{{ u.masjid.city.name|default:"—" }}</td>
+<td>{% if u.is_approved %}<span class="badge bg-success">Approved</span>{% else %}<span class="badge bg-warning text-dark">Pending</span>{% endif %}</td>
+</tr>
+{% empty %}<tr><td colspan="7" class="text-center text-muted py-4">Koi user nahi</td></tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+</div>
+{% endblock %}

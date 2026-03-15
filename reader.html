@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% block title %}Quran — Page {{ page_number }}{% endblock %}
+{% block extra_css %}
+<style>
+.reader-page { touch-action: pan-y; user-select: none; }
+.quran-img { max-width:100%; border-radius:8px; box-shadow:0 4px 20px rgba(0,0,0,.15); display:block; margin:0 auto; }
+.nav-btn { display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;border:none;cursor:pointer;font-size:1.2rem;transition:all .2s; }
+.nav-btn:disabled { opacity:.3;cursor:not-allowed; }
+.bm-btn { background:none;border:none;font-size:1.4rem;cursor:pointer;transition:transform .2s; }
+.bm-btn:hover { transform:scale(1.2); }
+.page-info { font-size:.78rem;color:#64748b;text-align:center; }
+</style>
+{% endblock %}
+{% block content %}
+<!-- Top Nav -->
+<div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+<div class="d-flex align-items-center gap-2">
+<a href="{% url "quran_home" %}" style="color:#64748b;text-decoration:none;font-size:1.2rem">←</a>
+<div>
+<div style="font-weight:700;font-size:.9rem;color:#0a5c36">📖 Page {{ page_number }}</div>
+{% if surah %}<div style="font-size:.73rem;color:#64748b">{{ surah.name_english }} — {{ surah.name_arabic }}</div>{% endif %}
+</div>
+</div>
+<div class="d-flex align-items-center gap-3">
+<a href="{% url "quran_audio_surah" surah.number|default:1 %}" style="color:#c9973e;text-decoration:none;font-size:1.1rem" title="Audio">🎧</a>
+<button class="bm-btn" id="bmBtn" onclick="toggleBookmark()" title="Bookmark">
+{% if is_bookmarked %}🔖{% else %}🏷️{% endif %}
+</button>
+<a href="{% url "surah_index" %}" style="color:#64748b;text-decoration:none;font-size:.8rem">Surahs</a>
+</div>
+</div>
+
+<!-- Progress Bar -->
+<div style="background:#e2e8f0;border-radius:4px;height:4px;margin-bottom:16px">
+<div style="background:linear-gradient(90deg,#0a5c36,#2da870);height:4px;border-radius:4px;width:{{ page_number|floatformat:0 }}%" id="progressBar"></div>
+</div>
+
+<!-- Quran Page Image (CDN — 0 MB local storage!) -->
+<div class="reader-page" id="readerPage">
+<img src="{{ image_url }}"
+     alt="Quran Page {{ page_number }}"
+     class="quran-img"
+     id="quranImg"
+     loading="lazy"
+     onerror="this.src='https://via.placeholder.com/600x850/f8f6f1/0a5c36?text=Page+{{ page_number }}+Loading...'">
+</div>
+
+<!-- Page Info -->
+<div class="page-info mt-3 mb-3">
+Page {{ page_number }} / {{ total_pages }}
+{% if surah %} &nbsp;•&nbsp; {{ surah.name_english }}{% endif %}
+{% if surah.para_start %} &nbsp;•&nbsp; Para {{ surah.para_start }}{% endif %}
+</div>
+
+<!-- Navigation -->
+<div class="d-flex align-items-center justify-content-between px-2 mb-3">
+{% if prev_page %}
+<a href="{% url "quran_reader_page" prev_page %}" class="nav-btn" style="background:#f0fdf4;color:#0a5c36" id="prevBtn">←</a>
+{% else %}
+<button class="nav-btn" disabled style="background:#f1f5f9;color:#cbd5e1">←</button>
+{% endif %}
+
+<div style="text-align:center">
+<div style="font-weight:800;font-size:1.4rem;color:#0a5c36;font-family:'Amiri',serif">{{ page_number }}</div>
+<div style="font-size:.68rem;color:#94a3b8">TAP YA SWIPE</div>
+</div>
+
+{% if next_page %}
+<a href="{% url "quran_reader_page" next_page %}" class="nav-btn" style="background:#0a5c36;color:#fff" id="nextBtn">→</a>
+{% else %}
+<button class="nav-btn" disabled style="background:#f1f5f9;color:#cbd5e1">→</button>
+{% endif %}
+</div>
+
+<!-- Jump to page -->
+<div style="background:#f8fafc;border-radius:12px;padding:12px 16px;margin-top:8px">
+<div class="d-flex gap-2 align-items-center">
+<input type="number" id="jumpPage" class="form-control" style="max-width:120px;font-size:.85rem" placeholder="Page no..." min="1" max="604" value="{{ page_number }}">
+<button onclick="jumpToPage()" class="btn-emerald" style="white-space:nowrap;padding:8px 16px;border:none;cursor:pointer;font-size:.82rem">Go →</button>
+<a href="{% url "surah_index" %}" class="btn-ghost" style="font-size:.82rem;white-space:nowrap">Surah List</a>
+</div>
+</div>
+
+<!-- Toast -->
+<div id="toast" style="display:none;position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:10px 20px;border-radius:20px;font-size:.82rem;z-index:999">Bookmark save!</div>
+
+{% endblock %}
+{% block extra_js %}
+<script>
+const CURRENT_PAGE = {{ page_number }};
+const TOTAL_PAGES  = {{ total_pages }};
+let IS_BOOKMARKED  = {% if is_bookmarked %}true{% else %}false{% endif %};
+
+// Progress bar
+document.getElementById('progressBar').style.width = (CURRENT_PAGE / TOTAL_PAGES * 100) + '%';
+
+// Bookmark toggle
+function toggleBookmark() {
+  fetch('/quran/bookmark/{{ page_number }}/toggle/', {
+    method: 'POST',
+    headers: {'X-CSRFToken': '{{ csrf_token }}', 'Content-Type': 'application/json'}
+  })
+  .then(r => r.json())
+  .then(data => {
+    IS_BOOKMARKED = data.status === 'added';
+    document.getElementById('bmBtn').textContent = IS_BOOKMARKED ? '🔖' : '🏷️';
+    showToast(data.message);
+  });
+}
+
+// Jump to page
+function jumpToPage() {
+  const p = parseInt(document.getElementById('jumpPage').value);
+  if (p >= 1 && p <= TOTAL_PAGES) window.location.href = `/quran/read/${p}/`;
+}
+
+// Toast
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 2000);
+}
+
+// Swipe/keyboard navigation
+let touchStartX = 0;
+document.getElementById('readerPage').addEventListener('touchstart', e => touchStartX = e.changedTouches[0].screenX);
+document.getElementById('readerPage').addEventListener('touchend', e => {
+  const diff = touchStartX - e.changedTouches[0].screenX;
+  if (Math.abs(diff) > 60) {
+    if (diff > 0 && CURRENT_PAGE < TOTAL_PAGES) window.location.href = `/quran/read/${CURRENT_PAGE+1}/`;
+    if (diff < 0 && CURRENT_PAGE > 1) window.location.href = `/quran/read/${CURRENT_PAGE-1}/`;
+  }
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' && CURRENT_PAGE < TOTAL_PAGES) window.location.href = `/quran/read/${CURRENT_PAGE+1}/`;
+  if (e.key === 'ArrowLeft'  && CURRENT_PAGE > 1) window.location.href = `/quran/read/${CURRENT_PAGE-1}/`;
+});
+</script>
+{% endblock %}

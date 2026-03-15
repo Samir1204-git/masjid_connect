@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Masjid Schedule{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+<div><h4 class="fw-bold mb-1" style="color:#0a5c36">📅 Masjid Schedule</h4>
+<p class="text-muted mb-0" style="font-size:.83rem">Fajr Bayan, Maghrib Taleem, Gasht, Mashwara</p></div>
+{% if user.is_any_admin %}<a href="{% url "add_schedule" %}" class="btn-emerald" style="text-decoration:none">+ Add Schedule</a>{% endif %}
+</div>
+{% regroup schedules by get_day_of_week_display as day_list %}
+{% for day in day_list %}
+<div class="card mb-3">
+<div class="card-head"><h6>📅 {{ day.grouper }}</h6></div>
+<div class="card-body p-0">
+{% for s in day.list %}
+<div class="d-flex align-items-center gap-3 px-4 py-3" style="border-bottom:1px solid #f1f5f9">
+<div style="width:50px;text-align:center">
+<div style="font-size:1rem;font-weight:800;color:#0a5c36">{{ s.time|time:"H:i" }}</div>
+</div>
+<div style="width:36px;height:36px;background:#f0fdf4;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem">
+{% if s.schedule_type == "fajr_bayan" %}🌅{% elif s.schedule_type == "maghrib_taleem" %}🌆{% elif s.schedule_type == "gasht" %}🚶{% elif s.schedule_type == "mashwara" %}💬{% elif s.schedule_type == "juma" %}🕌{% elif s.schedule_type == "taraweeh" %}🌙{% else %}📌{% endif %}
+</div>
+<div>
+<div class="fw-bold" style="font-size:.87rem">{{ s.title }}</div>
+<div class="text-muted" style="font-size:.74rem">{{ s.get_schedule_type_display }}{% if s.is_recurring %} • Weekly{% endif %}</div>
+{% if s.description %}<div style="font-size:.74rem;color:#64748b">{{ s.description }}</div>{% endif %}
+</div>
+</div>
+{% endfor %}
+</div>
+</div>
+{% empty %}
+<div class="card"><div class="card-body text-center py-5">
+<div style="font-size:3rem">📅</div>
+<h6 class="text-muted mt-2">Koi schedule nahi</h6>
+{% if user.is_any_admin %}<a href="{% url "add_schedule" %}" class="btn-emerald mt-3" style="text-decoration:none">Pehla Schedule Add Karo</a>{% endif %}
+</div></div>
+{% endfor %}
+{% endblock %}

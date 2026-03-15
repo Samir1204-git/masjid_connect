@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Prayer Times Setup{% endblock %}
+{% block content %}
+<div class="d-flex align-items-center gap-2 mb-4">
+  <a href="{% url 'feed_home' %}" style="color:#64748b;text-decoration:none;font-size:1.3rem">←</a>
+  <h4 class="fw-bold mb-0" style="color:#0a5c36">🕌 Namaz Timings Set Karo</h4>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <p style="font-size:.83rem;color:#64748b;margin-bottom:20px">
+      Apni masjid ki namaz timings set karo. Namazi ko live countdown dikhega.
+    </p>
+    <form method="POST">
+      {% csrf_token %}
+      {% for prayer in prayers %}
+      {% with pt=existing|get_item:prayer %}
+      <div style="background:#f8fafc;border-radius:12px;padding:14px 16px;margin-bottom:12px">
+        <div style="font-weight:700;font-size:.88rem;color:#1e293b;margin-bottom:10px;text-transform:capitalize">
+          {% if prayer == 'fajr' %}🌅 Fajr
+          {% elif prayer == 'zuhr' %}☀️ Zuhr
+          {% elif prayer == 'asr' %}🌤 Asr
+          {% elif prayer == 'maghrib' %}🌆 Maghrib
+          {% elif prayer == 'isha' %}🌙 Isha
+          {% elif prayer == 'jummah' %}🕌 Jummah
+          {% endif %}
+        </div>
+        <div class="row g-2">
+          <div class="col-6">
+            <label style="font-size:.72rem;color:#64748b;margin-bottom:4px;display:block">Adhan (Azaan)</label>
+            <input type="time" name="{{ prayer }}_adhan" class="form-control form-control-sm"
+                   value="{% if pt %}{{ pt.adhan_time|time:'H:i' }}{% endif %}">
+          </div>
+          <div class="col-6">
+            <label style="font-size:.72rem;color:#64748b;margin-bottom:4px;display:block">Iqama (Jamaat)</label>
+            <input type="time" name="{{ prayer }}_iqama" class="form-control form-control-sm"
+                   value="{% if pt and pt.iqama_time %}{{ pt.iqama_time|time:'H:i' }}{% endif %}">
+          </div>
+        </div>
+      </div>
+      {% endwith %}
+      {% endfor %}
+      <button type="submit" class="btn-emerald" style="border:none;width:100%;padding:12px;font-size:.9rem;font-weight:700;cursor:pointer;border-radius:12px;margin-top:8px">
+        💾 Save Prayer Times
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}

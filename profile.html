@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}{{ profile.name }} - Profile{% endblock %}
+{% block content %}
+<a href="{% url "directory" %}" class="btn-ghost mb-3">← Directory</a>
+<div class="card">
+<div style="background:linear-gradient(135deg,#062618,#1a7a50);padding:32px;color:#fff;text-align:center">
+<div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#c9973e,#e8b84b);display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:800;color:#0a5c36;margin:0 auto 16px">{{ profile.name|first|upper }}</div>
+<h4 class="fw-bold mb-1">{{ profile.name }}</h4>
+<div class="mb-2"><span class="role-chip {% if profile.is_markaz_admin %}chip-markaz{% elif profile.is_masjid_admin %}chip-masjid{% else %}chip-namazi{% endif %}">{{ profile.get_role_display }}</span></div>
+{% if profile.masjid %}<div style="opacity:.7;font-size:.83rem">🕌 {{ profile.masjid.name }}, {{ profile.masjid.city.name }}</div>{% endif %}
+</div>
+<div class="card-body">
+<div class="row g-3">
+<div class="col-md-6">
+<div style="background:#f8f6f1;border-radius:12px;padding:16px">
+<div style="font-size:.72rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Contact</div>
+<div style="font-size:.87rem">📱 {{ profile.mobile }}</div>
+</div>
+</div>
+{% if profile.bio %}
+<div class="col-12">
+<div style="background:#f0fdf4;border-radius:12px;padding:16px">
+<div style="font-size:.72rem;font-weight:700;color:#166534;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">About</div>
+<div style="font-size:.87rem">{{ profile.bio }}</div>
+</div>
+</div>{% endif %}
+<div class="col-12">
+<a href="{% url "conversation" profile.id %}" class="btn-emerald w-100" style="text-decoration:none;text-align:center;display:block;padding:12px"><i class="bi bi-chat-dots"></i> Direct Message Bhejo</a>
+</div>
+</div>
+</div>
+</div>
+{% endblock %}

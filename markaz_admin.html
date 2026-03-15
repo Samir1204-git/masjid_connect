@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}Markaz Admin Dashboard{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+<div>
+<h4 class="fw-bold mb-1" style="color:#0a5c36">🌟 Markaz Admin — {{ city.name|default:"City" }}</h4>
+<p class="text-muted mb-0" style="font-size:.83rem">City-wide management</p>
+</div>
+<div class="d-flex gap-2 flex-wrap">
+<a href="{% url "ann_add" %}" class="btn-emerald" style="text-decoration:none;font-size:.8rem">📢 Announce</a>
+<a href="{% url "add_donation" %}" class="btn-gold" style="text-decoration:none;font-size:.8rem">💚 Donation</a>
+<a href="{% url "review_molana_requests" %}" class="btn-ghost" style="font-size:.8rem">🔔 Requests {% if pending_reqs %}<span style="background:#dc2626;color:#fff;border-radius:20px;padding:0 6px;font-size:.62rem">{{ pending_reqs }}</span>{% endif %}</a>
+</div>
+</div>
+<div class="row g-3 mb-4">
+<div class="col-6 col-lg-3"><div class="stat-card sc-green"><div class="stat-icon si-green"><i class="bi bi-building2"></i></div><div class="stat-val">{{ city_masjids }}</div><div class="stat-lbl">City Masjids</div></div></div>
+<div class="col-6 col-lg-3"><div class="stat-card sc-blue"><div class="stat-icon si-blue"><i class="bi bi-people-fill"></i></div><div class="stat-val">{{ city_namazi }}</div><div class="stat-lbl">Namazi</div></div></div>
+<div class="col-6 col-lg-3"><div class="stat-card sc-gold"><div class="stat-icon si-gold"><i class="bi bi-bell-fill"></i></div><div class="stat-val">{{ pending_reqs }}</div><div class="stat-lbl">Pending</div></div></div>
+<div class="col-6 col-lg-3"><div class="stat-card sc-red"><div class="stat-icon si-red"><i class="bi bi-heart-fill"></i></div><div class="stat-val">₹{{ total_donation|floatformat:0 }}</div><div class="stat-lbl">Donations</div></div></div>
+</div>
+<div class="row g-3">
+<div class="col-lg-6">
+<div class="card">
+<div class="card-head"><h6><i class="bi bi-megaphone-fill" style="color:#c9973e"></i> Markaz Announcements</h6><a href="{% url "ann_add" %}" class="btn-emerald" style="text-decoration:none;font-size:.72rem;padding:5px 12px">+ New</a></div>
+<div class="card-body p-0 px-3">
+{% for ann in markaz_announcements %}
+<div class="ann-item">
+<div class="ann-dot" style="background:#fef9ee">🌐</div>
+<div>{% if ann.is_important %}<span style="width:7px;height:7px;background:#dc2626;border-radius:50%;display:inline-block;margin-right:4px"></span>{% endif %}
+<div class="ann-title">{{ ann.title }}</div>
+<div class="ann-meta">{{ ann.created_at|timesince }} pehle &nbsp;•&nbsp; {{ ann.created_by.name }}</div>
+</div>
+</div>
+{% empty %}<div class="py-4 text-center text-muted" style="font-size:.83rem">Koi announcement nahi</div>{% endfor %}
+</div>
+</div>
+</div>
+<div class="col-lg-6">
+<div class="card">
+<div class="card-head"><h6><i class="bi bi-building2" style="color:#0a5c36"></i> City Masjids</h6><a href="{% url "donation_report" %}" class="btn-gold" style="text-decoration:none;font-size:.72rem;padding:5px 12px">Report</a></div>
+<div class="card-body p-0">
+<table class="table tbl mb-0">
+<thead><tr><th>Masjid</th><th>Type</th><th>Namazi</th></tr></thead>
+<tbody>
+{% for m in city_masjid_list %}
+<tr><td><strong>{{ m.name }}</strong></td>
+<td>{% if m.is_markaz %}<span class="badge-markaz">Markaz</span>{% else %}<span class="badge-masjid">Masjid</span>{% endif %}</td>
+<td>{{ m.total_namazi }}</td></tr>
+{% empty %}<tr><td colspan="3" class="text-center text-muted py-3">Koi masjid nahi</td></tr>{% endfor %}
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="col-12">
+<div class="card">
+<div class="card-head"><h6><i class="bi bi-heart-fill text-danger"></i> Recent Donations</h6><a href="{% url "donation_list" %}" class="btn-ghost" style="font-size:.75rem;padding:5px 12px">Sab Dekho</a></div>
+<div class="card-body p-0">
+<table class="table tbl mb-0">
+<thead><tr><th>Masjid</th><th>Type</th><th>Amount</th><th>Date</th><th>Status</th></tr></thead>
+<tbody>
+{% for d in recent_donations %}
+<tr><td>{{ d.masjid.name|truncatechars:20 }}</td>
+<td><span class="badge-masjid">{{ d.get_donation_type_display }}</span></td>
+<td><strong>₹{{ d.amount }}</strong></td>
+<td>{{ d.date|date:"d M" }}</td>
+<td>{% if d.status == "approved" %}<span class="badge bg-success" style="font-size:.65rem">✓</span>{% else %}<span class="badge bg-warning text-dark" style="font-size:.65rem">Pending</span>{% endif %}</td>
+</tr>
+{% empty %}<tr><td colspan="5" class="text-center text-muted py-3">Koi donation nahi</td></tr>{% endfor %}
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Quran Kareem Section -->
+<div class="row g-3 mt-2">
+<div class="col-12">
+<div class="card">
+<div class="card-head">
+<h6><i class="bi bi-book-half" style="color:#c9973e"></i> Quran Kareem</h6>
+<a href="{% url "quran_home" %}" class="btn-gold" style="text-decoration:none;font-size:.72rem;padding:5px 12px">Open →</a>
+</div>
+<div class="card-body">
+<div class="row g-3">
+<div class="col-6 col-md-3">
+<a href="{% url "quran_home" %}" style="text-decoration:none;display:block;text-align:center;padding:16px 10px;background:linear-gradient(135deg,#fef9ee,#fff8e7);border-radius:12px;border:1px solid #fde68a;transition:all .2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
+<div style="font-size:1.8rem;margin-bottom:6px">📖</div>
+<div style="font-size:.75rem;font-weight:600;color:#92400e">Quran Read</div>
+</a>
+</div>
+<div class="col-6 col-md-3">
+<a href="{% url "quran_audio" %}" style="text-decoration:none;display:block;text-align:center;padding:16px 10px;background:#eff6ff;border-radius:12px;border:1px solid #bfdbfe;transition:all .2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
+<div style="font-size:1.8rem;margin-bottom:6px">🎧</div>
+<div style="font-size:.75rem;font-weight:600;color:#1e40af">Audio</div>
+</a>
+</div>
+<div class="col-6 col-md-3">
+<a href="{% url "surah_index" %}" style="text-decoration:none;display:block;text-align:center;padding:16px 10px;background:#f0fdf4;border-radius:12px;border:1px solid #dcfce7;transition:all .2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
+<div style="font-size:1.8rem;margin-bottom:6px">📋</div>
+<div style="font-size:.75rem;font-weight:600;color:#166534">Surah Index</div>
+</a>
+</div>
+<div class="col-6 col-md-3">
+<a href="{% url "quran_bookmarks" %}" style="text-decoration:none;display:block;text-align:center;padding:16px 10px;background:#fdf4ff;border-radius:12px;border:1px solid #e9d5ff;transition:all .2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
+<div style="font-size:1.8rem;margin-bottom:6px">🔖</div>
+<div style="font-size:.75rem;font-weight:600;color:#6b21a8">Bookmarks</div>
+</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}{{ content.title }}{% endblock %}
+{% block content %}
+<a href="{% url "learning_category" content.category.slug %}" class="btn-ghost mb-3">← {{ content.category.title }}</a>
+<div class="card">
+<div style="background:linear-gradient(135deg,#062618,#1a7a50);padding:24px;color:#fff">
+<div style="font-size:2rem;margin-bottom:8px">{{ content.category.icon }}</div>
+<h4 class="fw-bold mb-1">{{ content.title }}</h4>
+<div style="opacity:.7;font-size:.78rem">{{ content.category.title }}</div>
+</div>
+<div class="card-body">
+<div style="font-size:.9rem;line-height:1.8;color:#334155;margin-bottom:24px">{{ content.summary }}</div>
+{% if content.audio_url %}
+<div class="mb-3" style="background:#f0fdf4;border-radius:12px;padding:16px">
+<div style="font-size:.75rem;font-weight:700;color:#166534;margin-bottom:8px">🎵 Audio Bayan</div>
+<audio controls style="width:100%"><source src="{{ content.audio_url }}"></audio>
+</div>{% endif %}
+{% if content.video_url %}
+<div class="mb-3" style="background:#eff6ff;border-radius:12px;padding:16px">
+<div style="font-size:.75rem;font-weight:700;color:#1e40af;margin-bottom:8px">🎬 Video</div>
+<div style="position:relative;padding-bottom:56.25%;border-radius:8px;overflow:hidden">
+<iframe src="{{ content.video_url }}" style="position:absolute;inset:0;width:100%;height:100%;border:none" allowfullscreen></iframe>
+</div>
+</div>{% endif %}
+{% if content.pdf_file %}
+<a href="{{ content.pdf_file.url }}" target="_blank" class="btn-emerald" style="text-decoration:none">📄 PDF Download Karo</a>
+{% endif %}
+</div>
+</div>
+{% endblock %}

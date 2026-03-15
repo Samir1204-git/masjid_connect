@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}{{ book.title }}{% endblock %}
+{% block content %}
+
+<!-- Back + Header -->
+<div class="d-flex align-items-center gap-2 mb-4">
+  <a href="{% url 'library_home' %}" style="color:#64748b;text-decoration:none;font-size:1.2rem">←</a>
+  <div style="flex:1">
+    <h4 class="fw-bold mb-0" style="color:#0a5c36">{{ book.title }}</h4>
+    {% if book.title_urdu %}<div style="font-family:'Amiri',serif;font-size:1rem;color:#1a7a50;direction:rtl">{{ book.title_urdu }}</div>{% endif %}
+    {% if book.author %}<div style="font-size:.78rem;color:#64748b">✍️ {{ book.author }}</div>{% endif %}
+  </div>
+</div>
+
+<!-- Action Bar -->
+<div style="background:linear-gradient(135deg,#062618,#0a5c36);border-radius:16px;padding:18px 20px;margin-bottom:24px;color:#fff">
+  <div class="d-flex gap-2 flex-wrap align-items-center">
+    <a href="{% url 'library_resume' book.id %}"
+       style="background:#c9973e;color:#fff;text-decoration:none;padding:11px 24px;border-radius:10px;font-size:.88rem;font-weight:700">
+      ▶ {% if last_read %}Resume — p.{{ last_read.page_number }}{% else %}Start Reading{% endif %}
+    </a>
+    <a href="{% url 'library_bookmarks' %}"
+       style="background:rgba(255,255,255,.15);color:#fff;text-decoration:none;padding:11px 16px;border-radius:10px;font-size:.82rem">
+      🔖 Bookmarks
+    </a>
+    <a href="{% url 'library_search' %}"
+       style="background:rgba(255,255,255,.15);color:#fff;text-decoration:none;padding:11px 16px;border-radius:10px;font-size:.82rem">
+      🔍 Search
+    </a>
+  </div>
+  {% if last_read %}
+  <div style="margin-top:12px;font-size:.75rem;opacity:.7">
+    Aakhri baar: Page {{ last_read.page_number }} / {{ book.total_pages }} • {{ last_read.updated_at|timesince }} pehle
+  </div>
+  {% endif %}
+</div>
+
+<!-- Book Info -->
+{% if book.description %}
+<div class="card mb-3">
+  <div class="card-body" style="font-size:.85rem;color:#475569;line-height:1.7">
+    {{ book.description }}
+  </div>
+</div>
+{% endif %}
+
+<!-- Stats -->
+<div class="d-flex gap-3 flex-wrap">
+  <div style="background:#f0fdf4;border-radius:12px;padding:14px 20px;flex:1;min-width:120px;text-align:center">
+    <div style="font-size:1.4rem;font-weight:800;color:#0a5c36">{{ book.total_pages }}</div>
+    <div style="font-size:.72rem;color:#64748b">Total Pages</div>
+  </div>
+  {% if last_read %}
+  <div style="background:#fef9ee;border-radius:12px;padding:14px 20px;flex:1;min-width:120px;text-align:center">
+    <div style="font-size:1.4rem;font-weight:800;color:#92400e">{{ last_read.page_number }}</div>
+    <div style="font-size:.72rem;color:#64748b">Aakhri Page</div>
+  </div>
+  {% endif %}
+  <div style="background:#eff6ff;border-radius:12px;padding:14px 20px;flex:1;min-width:120px;text-align:center">
+    <div style="font-size:1.4rem;font-weight:800;color:#1e40af">{{ bookmark_count }}</div>
+    <div style="font-size:.72rem;color:#64748b">Bookmarks</div>
+  </div>
+</div>
+
+{% endblock %}

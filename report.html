@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Donation Report{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+<h4 class="fw-bold mb-0" style="color:#0a5c36">📊 Donation Report</h4>
+<a href="{% url "donation_list" %}" class="btn-ghost">← Back</a>
+</div>
+{% for row in data %}
+<div class="card mb-3">
+<div class="card-head">
+<h6>🕌 {{ row.name }}</h6>
+<strong style="color:#1a7a50">Total: ₹{{ row.total|floatformat:0 }}</strong>
+</div>
+<div class="card-body">
+<div class="row g-2">
+{% for type_label,amount in row.summary.items %}{% if amount %}
+<div class="col-6 col-md-4 col-lg-2">
+<div style="text-align:center;padding:14px 10px;background:#f8f6f1;border-radius:10px;border:1px solid #e2e8f0">
+<div style="font-size:.68rem;color:#64748b;text-transform:uppercase;letter-spacing:.5px">{{ type_label }}</div>
+<div style="font-size:1.1rem;font-weight:800;color:#0a5c36">₹{{ amount|floatformat:0 }}</div>
+</div>
+</div>{% endif %}{% endfor %}
+</div>
+</div>
+</div>
+{% empty %}<div class="card"><div class="card-body text-center py-5"><div style="font-size:3rem">📊</div><h6 class="text-muted mt-2">Koi approved donation nahi</h6></div></div>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Approval Pending{% endblock %}
+{% block content %}
+<div class="text-center" style="max-width:500px;margin:60px auto">
+<div style="font-size:4rem;margin-bottom:16px">⏳</div>
+<h4 class="fw-bold" style="color:#0a5c36">Approval Ka Intezaar</h4>
+<p class="text-muted" style="font-size:.9rem;line-height:1.7">Aapki request pending hai. Approve hone ke baad poore features use kar sakte hain.</p>
+<div style="background:#f0fdf4;border-radius:14px;padding:20px;margin:24px 0;text-align:left">
+<div style="font-size:.85rem;font-weight:600;color:#166534;margin-bottom:10px">Tab tak use kar sakte hain:</div>
+<div class="d-flex flex-column gap-2">
+<div style="font-size:.82rem;color:#475569">✅ Prayer Times</div>
+<div style="font-size:.82rem;color:#475569">✅ 6 Sifaat Learning</div>
+<div style="font-size:.82rem;color:#475569">✅ Namaz Guide</div>
+<div style="font-size:.82rem;color:#475569">✅ Duayein</div>
+<div style="font-size:.82rem;color:#475569">✅ Wuzu Guide</div>
+<div style="font-size:.82rem;color:#475569">✅ Molana Directory</div>
+</div>
+</div>
+<a href="{% url "prayer_times" %}" class="btn-emerald" style="text-decoration:none">Prayer Times Dekho →</a>
+</div>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Add Schedule{% endblock %}
+{% block content %}
+<a href="{% url "schedule_list" %}" class="btn-ghost mb-3">← Back</a>
+<div class="row justify-content-center"><div class="col-lg-6">
+<div class="form-card">
+<div class="d-flex align-items-center gap-3 mb-4">
+<div style="width:50px;height:50px;border-radius:14px;background:linear-gradient(135deg,#0a5c36,#2da870);display:flex;align-items:center;justify-content:center;font-size:1.4rem">📅</div>
+<div><h5 class="fw-bold mb-0" style="color:#0a5c36">Schedule Add Karo</h5><small class="text-muted">Fajr Bayan, Gasht, Mashwara, etc.</small></div>
+</div>
+<form method="post">{% csrf_token %}
+{% for field in form %}
+<div class="mb-3"><label class="form-label">{{ field.label }}</label>{{ field }}
+{% if field.errors %}<div class="text-danger" style="font-size:.78rem">{{ field.errors.0 }}</div>{% endif %}
+</div>{% endfor %}
+<button type="submit" class="btn-emerald w-100" style="padding:12px">Schedule Save Karo</button>
+</form>
+</div>
+</div></div>
+{% endblock %}

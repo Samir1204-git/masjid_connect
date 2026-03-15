@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Markaz Setup{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+<div class="col-lg-6">
+<div style="background:linear-gradient(135deg,#0a5c36,#1a7a50);border-radius:16px;padding:24px;margin-bottom:24px;color:#fff">
+<div style="font-size:2rem;margin-bottom:10px">🎉</div>
+<h5 class="fw-bold mb-1">Mubarak ho! Approval mil gayi</h5>
+<p style="opacity:.8;font-size:.85rem;margin:0">Ab apna Markaz Masjid register karo. City auto-create ho jayegi.</p>
+</div>
+<div class="form-card">
+<h5 class="fw-bold mb-4" style="color:#0a5c36">🕌 Markaz Masjid Add Karo</h5>
+<form method="post">{% csrf_token %}
+{% for field in form %}
+<div class="mb-3">
+<label class="form-label">{{ field.label }}</label>
+{{ field }}
+{% if field.errors %}<div style="color:#dc2626;font-size:.75rem;margin-top:3px">{{ field.errors.0 }}</div>{% endif %}
+</div>
+{% endfor %}
+<button type="submit" class="btn-emerald w-100" style="padding:13px">✅ Markaz Masjid Save Karo</button>
+</form>
+</div>
+</div>
+</div>
+{% endblock %}

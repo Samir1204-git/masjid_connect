@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}My Bookmarks{% endblock %}
+{% block content %}
+<div class="d-flex align-items-center justify-content-between mb-4">
+<div class="d-flex align-items-center gap-2">
+<a href="{% url "quran_home" %}" style="color:#64748b;text-decoration:none;font-size:1.2rem">←</a>
+<h4 class="fw-bold mb-0" style="color:#0a5c36">🔖 Bookmarks</h4>
+</div>
+</div>
+{% if bookmarks %}
+{% for bm in bookmarks %}
+<div style="background:#fff;border-radius:12px;border:1px solid #e2e8f0;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between">
+<div>
+<div style="font-weight:700;font-size:.9rem;color:#0a5c36">Page {{ bm.page_number }}</div>
+{% if bm.surah %}<div style="font-size:.78rem;color:#64748b">{{ bm.surah.name_english }} — {{ bm.surah.name_arabic }}</div>{% endif %}
+<div style="font-size:.72rem;color:#94a3b8;margin-top:2px">{{ bm.label }} &nbsp;•&nbsp; {{ bm.created_at|timesince }} pehle</div>
+</div>
+<a href="{% url "quran_reader_page" bm.page_number %}" class="btn-emerald" style="text-decoration:none;font-size:.78rem;padding:7px 14px">Read →</a>
+</div>
+{% endfor %}
+{% else %}
+<div class="text-center py-5 text-muted">
+<div style="font-size:3rem;margin-bottom:12px">🔖</div>
+<div>Koi bookmark nahi — Reader mein 🏷️ button dabao</div>
+</div>
+{% endif %}
+{% endblock %}

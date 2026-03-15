@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Markaz Requests{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+<div>
+<h4 class="fw-bold mb-1" style="color:#0a5c36">⭐ Markaz Molana Requests</h4>
+<p class="text-muted mb-0" style="font-size:.83rem">Pro Admin — Naye Markaz Masjid approve karo</p>
+</div>
+<span class="badge" style="background:#fef9ee;color:#92400e;border:1px solid #fde68a;font-size:.82rem;padding:6px 14px">{{ requests|length }} Pending</span>
+</div>
+{% for req in requests %}
+<div class="card mb-3">
+<div class="card-body">
+<div class="row g-3 align-items-center">
+<div class="col-md-1">
+<div style="width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,#c9973e,#e8b84b);display:flex;align-items:center;justify-content:center;font-weight:800;color:#0a5c36;font-size:1.1rem">{{ req.user.name|first|upper }}</div>
+</div>
+<div class="col-md-6">
+<div class="fw-bold" style="font-size:.95rem">{{ req.user.name }}</div>
+<div style="font-size:.78rem;color:#64748b;margin:3px 0">📱 {{ req.user.mobile }}</div>
+<div style="font-size:.82rem;color:#475569">
+🏙️ <strong>City:</strong> {{ req.city_name }}, {{ req.state_name }}<br>
+🕌 <strong>Masjid:</strong> {{ req.masjid_name }}<br>
+{% if req.masjid_address %}📍 {{ req.masjid_address|truncatechars:50 }}<br>{% endif %}
+{% if req.message %}💬 {{ req.message|truncatechars:80 }}{% endif %}
+</div>
+<div style="font-size:.7rem;color:#94a3b8;margin-top:4px">{{ req.created_at|timesince }} pehle</div>
+</div>
+<div class="col-md-5 text-end">
+<div style="background:#f0fdf4;border-radius:10px;padding:12px;margin-bottom:10px;font-size:.78rem;color:#166534;text-align:left">
+<strong>Approve hone par automatically:</strong><br>
+✅ {{ req.state_name }} → {{ req.city_name }} city banegi<br>
+✅ Markaz Masjid "{{ req.masjid_name }}" banegi<br>
+✅ {{ req.user.name }} ko Markaz Molana role milega
+</div>
+<div class="d-flex gap-2 justify-content-end">
+<a href="{% url "approve_markaz_request" req.pk %}" class="btn-emerald" style="text-decoration:none;padding:9px 20px" onclick="return confirm('{{ req.user.name }} ko approve karein?')">✓ Approve</a>
+<a href="{% url "reject_markaz_request" req.pk %}" style="background:#fef2f2;color:#dc2626;border-radius:9px;padding:9px 20px;text-decoration:none;font-size:.82rem;font-weight:600" onclick="return confirm('Reject karna chahte hain?')">✕ Reject</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+{% empty %}
+<div class="card"><div class="card-body text-center py-5">
+<div style="font-size:3.5rem;margin-bottom:16px">✅</div>
+<h5 class="text-muted">Koi pending Markaz request nahi</h5>
+</div></div>
+{% endfor %}
+{% endblock %}

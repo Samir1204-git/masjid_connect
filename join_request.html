@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Masjid se Judo{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+<div class="col-lg-7">
+<div style="background:linear-gradient(135deg,#0a5c36,#1a7a50);border-radius:16px;padding:24px;margin-bottom:24px;color:#fff">
+<h5 class="fw-bold mb-1">🕌 Apni Masjid se Judo</h5>
+<p style="opacity:.8;font-size:.85rem;margin:0">Apni city select karo, masjid dhundho, aur request bhejo. Molana approve karenge.</p>
+</div>
+<div class="form-card mx-auto">
+<div class="mb-3">
+<label class="form-label">🏙️ City Select Karo</label>
+<select class="form-select" id="citySelect">
+<option value="">-- City chunein --</option>
+{% for city in cities %}
+<option value="{{ city.id }}">{{ city.name }}, {{ city.state.name }}</option>
+{% endfor %}
+</select>
+</div>
+<form method="post">{% csrf_token %}
+{% for field in form %}
+<div class="mb-3">
+<label class="form-label">{{ field.label }}</label>
+{{ field }}
+{% if field.errors %}<div class="text-danger" style="font-size:.78rem">{{ field.errors.0 }}</div>{% endif %}
+</div>
+{% endfor %}
+<button type="submit" class="btn-emerald w-100 mt-2" style="padding:12px">Request Bhejo →</button>
+</form>
+</div>
+</div>
+</div>
+{% endblock %}

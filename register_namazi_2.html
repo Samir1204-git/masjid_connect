@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% block title %}Namazi Register — Masjid Chunein{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+<div class="col-lg-6">
+
+<div style="background:#f0fdf4;border-radius:12px;padding:14px 18px;margin-bottom:20px;border:1px solid #bbf7d0">
+<div style="font-size:.82rem;color:#166534">✅ Account ban gaya! Ab apni <strong>city</strong> aur <strong>masjid</strong> chunein.</div>
+</div>
+
+<div class="form-card">
+<h5 class="fw-bold mb-1" style="color:#0a5c36">Step 2: Apni Masjid Chunein</h5>
+<p class="text-muted mb-4" style="font-size:.8rem">City chunein → Masjid chunein → Molana approve karenge</p>
+
+<div class="mb-3">
+<label class="form-label">🏙️ Apni City</label>
+<select class="form-select" id="cityDrop" onchange="loadMasjids(this.value)">
+<option value="">-- City chunein --</option>
+{% for city in cities %}
+<option value="{{ city.id }}" {% if selected_city_id == city.id|stringformat:"i" %}selected{% endif %}>{{ city.name }}, {{ city.state.name }}</option>
+{% endfor %}
+</select>
+</div>
+
+<form method="post" id="joinForm">{% csrf_token %}
+<input type="hidden" name="city" id="hiddenCity">
+
+<div class="mb-3">
+<label class="form-label">🕌 Apni Masjid</label>
+
+<select name="masjid" id="id_masjid" class="form-select">
+<option value="">-- Masjid chunein --</option>
+</select>
+
+<div id="masjidInfo" style="display:none;margin-top:6px;background:#f8f6f1;border-radius:8px;padding:10px;font-size:.78rem;color:#64748b"></div>
+</div>
+
+<div class="mb-3">
+<label class="form-label">{{ form.message.label }}</label>
+{{ form.message }}
+</div>
+
+<button type="submit" class="btn-emerald w-100" style="padding:12px">
+🤲 Request Bhejo → Molana
+</button>
+
+</form>
+</div>
+</div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+
+function loadMasjids(cityId) {
+
+    document.getElementById("hiddenCity").value = cityId;
+
+    const sel = document.getElementById("id_masjid");
+
+    sel.innerHTML = "<option>Loading...</option>";
+
+    if (!cityId) {
+        sel.innerHTML = "<option value=''>-- City pehle chunein --</option>";
+        return;
+    }
+
+    fetch(`/auth/api/masjids/?city_id=${cityId}`)
+    .then(response => response.json())
+    .then(data => {
+
+        sel.innerHTML = "<option value=''>-- Masjid chunein --</option>";
+
+        data.masjids.forEach(m => {
+
+            const option = document.createElement("option");
+
+            option.value = m.id;
+
+            option.textContent = m.name + (m.is_markaz ? " ⭐ Markaz" : "");
+
+            sel.appendChild(option);
+
+        });
+
+    });
+
+}
+
+// page load par agar city selected hai
+document.addEventListener("DOMContentLoaded", function(){
+
+    const cityDrop = document.getElementById("cityDrop");
+
+    if(cityDrop.value){
+        loadMasjids(cityDrop.value);
+    }
+
+});
+
+</script>
+{% endblock %}
+<script>
+function loadMasjids(cityId) {
+  document.getElementById("hiddenCity").value = cityId;
+  const sel = document.getElementById("id_masjid");
+  sel.innerHTML = "<option>Loading...</option>";
+  if (!cityId) { sel.innerHTML = "<option>-- City pehle chunein --</option>"; return; }
+  fetch(`/auth/api/masjids/?city_id=${cityId}`)
+    .then(r => r.json())
+    .then(data => {
+      sel.innerHTML = "<option value=''>-- Masjid chunein --</option>";
+      data.masjids.forEach(m => {
+        const opt = document.createElement("option");
+        opt.value = m.id;
+        opt.textContent = m.name + (m.is_markaz ? " ⭐ Markaz" : "");
+        sel.appendChild(opt);
+      });
+    });
+}
+// Load on page init if city is pre-selected
+const preCity = document.getElementById("cityDrop").value;
+if (preCity) loadMasjids(preCity);
+</script>

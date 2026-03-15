@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Masjid Molana Register — Step 2{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+<div class="col-lg-6">
+<!-- Progress -->
+<div style="background:#fff;border-radius:12px;padding:16px 20px;margin-bottom:20px;border:1px solid #e2e8f0">
+<div style="display:flex;align-items:center;gap:8px">
+<div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#2da870,#e8b84b);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800">✓</div>
+<div style="flex:1;height:3px;background:linear-gradient(90deg,#1a7a50,#e2e8f0)"></div>
+<div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#0a5c36,#2da870);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800">2</div>
+</div>
+<div style="display:flex;justify-content:space-between;margin-top:6px;font-size:.65rem">
+<span style="color:#64748b">Account ✓</span>
+<span style="color:#0a5c36;font-weight:600">City + Masjid Details</span>
+</div>
+</div>
+
+<div class="form-card">
+<h5 class="fw-bold mb-1" style="color:#0a5c36">Step 2: City + Apni Masjid</h5>
+<p class="text-muted mb-4" style="font-size:.8rem">City select karo — us city ke Markaz Molana ko request jayegi</p>
+
+{% if form.city.field.queryset.count == 0 %}
+<div style="background:#fffbeb;border-radius:12px;padding:18px;border:1px solid #fde68a;margin-bottom:20px">
+<div style="font-size:.87rem;color:#92400e;font-weight:600;margin-bottom:6px">⚠️ Abhi koi city registered nahi</div>
+<div style="font-size:.78rem;color:#a16207;line-height:1.5">Pehle kisi Markaz Molana ko register hona hoga. Agar aap hi pehle hain, toh Markaz Molana option se register karo.</div>
+<a href="{% url "register_markaz_step1" %}" style="display:inline-block;margin-top:10px;background:linear-gradient(135deg,#0a5c36,#2da870);color:#fff;border-radius:8px;padding:8px 16px;font-size:.8rem;font-weight:700;text-decoration:none">Markaz Molana ke roop me Register karo →</a>
+</div>
+{% else %}
+<form method="post">{% csrf_token %}
+{% for field in form %}
+<div class="mb-3">
+<label class="form-label">{{ field.label }}</label>
+{{ field }}
+{% if field.help_text %}<div style="font-size:.7rem;color:#94a3b8;margin-top:3px">{{ field.help_text }}</div>{% endif %}
+{% if field.errors %}<div style="color:#dc2626;font-size:.75rem;margin-top:3px">{{ field.errors.0 }}</div>{% endif %}
+</div>
+{% endfor %}
+<button type="submit" class="btn-emerald w-100 mt-2" style="padding:12px">🕌 Request Bhejo → Markaz Molana</button>
+</form>
+{% endif %}
+</div>
+</div>
+</div>
+{% endblock %}
